@@ -273,6 +273,10 @@
       if (elements.arrowImg) {
         elements.arrowImg.style.display = 'block';
         elements.arrowImg.style.transform = 'translateX(0px) rotate(0deg)';
+        elements.arrowImg.style.opacity = '1';
+        elements.arrowImg.classList.remove('crashed');
+        elements.arrowImg.style.removeProperty('--final-x');
+        elements.arrowImg.style.removeProperty('--final-rot');
       }
       
       // Запускаем анимацию
@@ -395,9 +399,27 @@
         elements.graphCtx.clearRect(0, 0, elements.graphCanvas.width, elements.graphCanvas.height);
       }
       
-      // Скрываем стрелку
+      // Анимация улёта стрелки
       if (elements.arrowImg) {
-        elements.arrowImg.style.display = 'none';
+        // Сохраняем текущую позицию для анимации
+        const currentTransform = elements.arrowImg.style.transform || 'translateX(0px) rotate(0deg)';
+        const xMatch = currentTransform.match(/translateX\(([^)]+)\)/);
+        const rotMatch = currentTransform.match(/rotate\(([^)]+)\)/);
+        const currentX = xMatch ? xMatch[1] : '0px';
+        const currentRot = rotMatch ? rotMatch[1] : '0deg';
+        
+        // Устанавливаем CSS переменные для анимации
+        elements.arrowImg.style.setProperty('--final-x', currentX);
+        elements.arrowImg.style.setProperty('--final-rot', currentRot);
+        
+        // Запускаем анимацию улёта
+        elements.arrowImg.classList.add('crashed');
+        
+        // Скрываем стрелку после анимации
+        setTimeout(() => {
+          elements.arrowImg.style.display = 'none';
+          elements.arrowImg.classList.remove('crashed');
+        }, 800);
       }
       
       // Показываем "Round ended"
