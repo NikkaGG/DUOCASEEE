@@ -1,0 +1,19 @@
+{
+  "name": "telegram-games",
+  "version": "1.0.0",
+  "description": "Multiplayer game server for Telegram Mini App",
+  "main": "server/server.js",
+  "scripts": {
+    "install": "cd server && npm install",
+    "start": "node server/server.js",
+    "dev": "cd server && npm run dev",
+    "build": "cd server && npm install"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": ["websocket", "socket.io", "telegram", "games"],
+  "author": "",
+  "license": "MIT"
+}
