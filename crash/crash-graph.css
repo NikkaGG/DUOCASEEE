@@ -1,0 +1,267 @@
+/* Crash Graph Animation Styles - Optimized for smooth 60 FPS */
+
+/* Canvas container */
+.crash-graph-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 12px;
+}
+
+/* Canvas element */
+#crashGraph {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: crisp-edges;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* Multiplier overlay - animated with CSS transitions */
+.multiplier-overlay {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 48px;
+  font-weight: bold;
+  color: #00ff88;
+  text-shadow: 0 0 20px rgba(0, 255, 136, 0.8),
+               0 0 40px rgba(0, 255, 136, 0.4);
+  pointer-events: none;
+  transition: color 0.3s ease, text-shadow 0.3s ease, transform 0.2s ease;
+  z-index: 10;
+}
+
+.multiplier-overlay.crashed {
+  color: #ff3366;
+  text-shadow: 0 0 20px rgba(255, 51, 102, 0.8),
+               0 0 40px rgba(255, 51, 102, 0.4);
+  animation: crashPulse 0.5s ease-out;
+}
+
+@keyframes crashPulse {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.2); }
+}
+
+/* Status indicators */
+.status-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: bold;
+  padding: 12px 24px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 20;
+}
+
+.status-indicator.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.status-indicator.waiting {
+  color: #ffaa00;
+  border: 2px solid #ffaa00;
+  box-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
+}
+
+.status-indicator.crashed {
+  color: #ff3366;
+  border: 2px solid #ff3366;
+  box-shadow: 0 0 20px rgba(255, 51, 102, 0.3);
+  animation: crashShake 0.5s ease-out;
+}
+
+@keyframes crashShake {
+  0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+  25% { transform: translate(-50%, -50%) rotate(-5deg); }
+  75% { transform: translate(-50%, -50%) rotate(5deg); }
+}
+
+/* Control buttons with smooth transitions */
+.crash-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 30;
+}
+
+.crash-btn {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.crash-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.crash-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.crash-btn.start {
+  background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+  color: #1a1a2e;
+  box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+}
+
+.crash-btn.start:hover {
+  box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
+}
+
+.crash-btn.crash {
+  background: linear-gradient(135deg, #ff3366 0%, #cc2952 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 51, 102, 0.3);
+}
+
+.crash-btn.crash:hover {
+  box-shadow: 0 8px 25px rgba(255, 51, 102, 0.5);
+}
+
+.crash-btn.reset {
+  background: linear-gradient(135deg, #6c63ff 0%, #5a52cc 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+}
+
+.crash-btn.reset:hover {
+  box-shadow: 0 8px 25px rgba(108, 99, 255, 0.5);
+}
+
+.crash-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Loading animation */
+.graph-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(0, 255, 136, 0.2);
+  border-top-color: #00ff88;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 15;
+}
+
+.graph-loading.visible {
+  opacity: 1;
+}
+
+@keyframes spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Fade in/out animations */
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.95); }
+}
+
+/* Glow pulse animation for active state */
+.glow-pulse {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { filter: drop-shadow(0 0 10px currentColor); }
+  50% { filter: drop-shadow(0 0 20px currentColor); }
+}
+
+/* Performance optimization */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.crash-graph-container * {
+  will-change: transform, opacity;
+}
+
+/* Smooth transitions for all interactive elements */
+button, .multiplier-overlay, .status-indicator {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .multiplier-overlay {
+    font-size: 36px;
+    top: 15px;
+  }
+  
+  .status-indicator {
+    font-size: 18px;
+    padding: 8px 16px;
+  }
+  
+  .crash-controls {
+    bottom: 15px;
+    gap: 8px;
+  }
+  
+  .crash-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+/* High performance mode - reduce animations on low-end devices */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
