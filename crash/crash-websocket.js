@@ -85,65 +85,22 @@
   // Флаг что данные получены
   let dataReceived = false;
   
-  // Создаем SVG график (как в Aviator)
+  // Создаем Canvas для графика
   if (gameContainer) {
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.id = 'crashGraphSVG';
-    svg.setAttribute('viewBox', '0 0 400 256');
-    svg.style.position = 'absolute';
-    svg.style.top = '0';
-    svg.style.left = '0';
-    svg.style.width = '100%';
-    svg.style.height = '100%';
-    svg.style.pointerEvents = 'none';
-    svg.style.display = 'none';
-    
-    // Сетка
-    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-    const pattern = document.createElementNS('http://www.w3.org/2000/svg', 'pattern');
-    pattern.setAttribute('id', 'grid');
-    pattern.setAttribute('width', '50');
-    pattern.setAttribute('height', '50');
-    pattern.setAttribute('patternUnits', 'userSpaceOnUse');
-    const gridPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    gridPath.setAttribute('d', 'M 50 0 L 0 0 0 50');
-    gridPath.setAttribute('fill', 'none');
-    gridPath.setAttribute('stroke', 'rgba(255,255,255,0.05)');
-    gridPath.setAttribute('stroke-width', '1');
-    pattern.appendChild(gridPath);
-    defs.appendChild(pattern);
-    svg.appendChild(defs);
-    
-    const gridRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    gridRect.setAttribute('width', '100%');
-    gridRect.setAttribute('height', '100%');
-    gridRect.setAttribute('fill', 'url(#grid)');
-    svg.appendChild(gridRect);
-    
-    // Линия графика
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.id = 'crashLine';
-    path.setAttribute('fill', 'none');
-    path.setAttribute('stroke', '#FF1D50');
-    path.setAttribute('stroke-width', '4');
-    path.setAttribute('stroke-linecap', 'round');
-    path.setAttribute('stroke-linejoin', 'round');
-    svg.appendChild(path);
-    
-    // Точка на конце (самолётик)
-    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    circle.id = 'crashDot';
-    circle.setAttribute('r', '8');
-    circle.setAttribute('fill', '#FF1D50');
-    circle.setAttribute('stroke', '#ffffff');
-    circle.setAttribute('stroke-width', '2');
-    circle.style.display = 'none';
-    svg.appendChild(circle);
-    
-    gameContainer.appendChild(svg);
-    elements.graphSVG = svg;
-    elements.graphLine = path;
-    elements.graphDot = circle;
+    const canvas = document.createElement('canvas');
+    canvas.id = 'crashGraph';
+    canvas.width = 400;
+    canvas.height = 256;
+    canvas.style.position = 'absolute';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.style.pointerEvents = 'none';
+    canvas.style.display = 'none';
+    gameContainer.appendChild(canvas);
+    elements.graphCanvas = canvas;
+    elements.graphCtx = canvas.getContext('2d');
   }
   
   // Данные графика
@@ -249,14 +206,9 @@
         cancelAnimationFrame(animationFrameId);
         animationFrameId = null;
       }
-      if (elements.graphLine) {
-        elements.graphLine.setAttribute('d', '');
-      }
-      if (elements.graphDot) {
-        elements.graphDot.style.display = 'none';
-      }
-      if (elements.graphSVG) {
-        elements.graphSVG.style.display = 'none';
+      if (elements.graphCtx && elements.graphCanvas) {
+        elements.graphCtx.clearRect(0, 0, elements.graphCanvas.width, elements.graphCanvas.height);
+        elements.graphCanvas.style.display = 'none';
       }
       
       // Убираем загрузку ТОЛЬКО КОГДА ПОЛУЧЕНЫ ДАННЫЕ
@@ -301,21 +253,18 @@
       graphCrashed = false;
       graphStartTime = Date.now();
       
-      // ОЧИЩАЕМ SVG
-      if (elements.graphLine) {
-        elements.graphLine.setAttribute('d', '');
-      }
-      if (elements.graphDot) {
-        elements.graphDot.style.display = 'none';
+      // ОЧИЩАЕМ CANVAS
+      if (elements.graphCtx && elements.graphCanvas) {
+        elements.graphCtx.clearRect(0, 0, elements.graphCanvas.width, elements.graphCanvas.height);
       }
       
       // Запускаем анимацию
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
       animateGraph();
       
-      // Показываем SVG
-      if (elements.graphSVG) {
-        elements.graphSVG.style.display = 'block';
+      // Показываем canvas
+      if (elements.graphCanvas) {
+        elements.graphCanvas.style.display = 'block';
       }
       
       // Убираем загрузку ТОЛЬКО КОГДА ПОЛУЧЕНЫ ДАННЫЕ
@@ -425,11 +374,8 @@
       
       // ОЧИЩАЕМ СРАЗУ ПОСЛЕ КРАША
       graphPoints = [];
-      if (elements.graphLine) {
-        elements.graphLine.setAttribute('d', '');
-      }
-      if (elements.graphDot) {
-        elements.graphDot.style.display = 'none';
+      if (elements.graphCtx && elements.graphCanvas) {
+        elements.graphCtx.clearRect(0, 0, elements.graphCanvas.width, elements.graphCanvas.height);
       }
       
       // Показываем "Round ended"
@@ -437,10 +383,10 @@
         elements.gameEnded.style.display = 'block';
       }
       
-      // Скрываем SVG через 3 секунды
+      // Скрываем canvas через 3 секунды
       setTimeout(() => {
-        if (elements.graphSVG) {
-          elements.graphSVG.style.display = 'none';
+        if (elements.graphCanvas) {
+          elements.graphCanvas.style.display = 'none';
         }
       }, 3000);
       
@@ -740,39 +686,174 @@
     });
   }
 
-  // ============ AVIATOR-STYLE SVG ГРАФИК ============
+  // ============ БЫСТРАЯ АНИМАЦИЯ ГРАФИКА ============
   function drawGraph() {
-    if (!elements.graphLine || graphPoints.length < 2) return;
+    if (!elements.graphCtx || !elements.graphCanvas) return;
     
-    // ПУЛЬСАЦИЯ ТОЛЬКО КОНЧИКА (как в Aviator!)
-    const pulse = Math.sin(Date.now() / 300) * 8; // Плавная пульсация ±8px
+    const ctx = elements.graphCtx;
+    const width = elements.graphCanvas.width;
+    const height = elements.graphCanvas.height;
     
-    // Строим SVG path
-    let pathData = `M ${graphPoints[0].x} ${graphPoints[0].y}`;
+    // ПОЛНАЯ ОЧИСТКА
+    ctx.clearRect(0, 0, width, height);
     
-    // Основная линия (без пульсации)
-    const pulseStartIdx = Math.max(0, graphPoints.length - 10); // Последние 10 точек пульсируют
-    
-    for (let i = 1; i < pulseStartIdx; i++) {
-      pathData += ` L ${graphPoints[i].x} ${graphPoints[i].y}`;
+    // СЕТКА
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < width; x += 50) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, height);
+      ctx.stroke();
+    }
+    for (let y = 0; y < height; y += 50) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(width, y);
+      ctx.stroke();
     }
     
-    // КОНЧИК С ПУЛЬСАЦИЕЙ (последние 10 точек)
-    for (let i = pulseStartIdx; i < graphPoints.length; i++) {
-      const progress = (i - pulseStartIdx) / 10; // 0 -> 1
-      const localPulse = pulse * progress; // Пульсация усиливается к концу
-      pathData += ` L ${graphPoints[i].x} ${graphPoints[i].y + localPulse}`;
+    if (graphPoints.length < 2) return;
+    
+    // ПУЛЬСАЦИЯ (вверх-вниз)
+    const pulse = Math.sin(Date.now() / 200) * 10; // Плавает ±10px
+    
+    // Цвет #FF1D50
+    const lineColor = '#FF1D50';
+    
+    // РИСУЕМ КРИВУЮ С ПУЛЬСАЦИЕЙ
+    ctx.beginPath();
+    ctx.moveTo(graphPoints[0].x, graphPoints[0].y + pulse);
+    
+    for (let i = 1; i < graphPoints.length; i++) {
+      ctx.lineTo(graphPoints[i].x, graphPoints[i].y + pulse);
     }
     
-    // Обновляем линию
-    elements.graphLine.setAttribute('d', pathData);
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.stroke();
     
-    // ТОЧКА НА КОНЦЕ (самолётик с пульсацией)
-    if (!graphCrashed && elements.graphDot) {
+    // ТОЧКА НА КОНЦЕ
+    if (!graphCrashed) {
       const lastPoint = graphPoints[graphPoints.length - 1];
-      elements.graphDot.setAttribute('cx', lastPoint.x);
-      elements.graphDot.setAttribute('cy', lastPoint.y + pulse);
-      elements.graphDot.style.display = 'block';
+      ctx.beginPath();
+      ctx.arc(lastPoint.x, lastPoint.y + pulse, 8, 0, Math.PI * 2);
+      ctx.fillStyle = lineColor;
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    
+    // ============ ДИНАМИЧЕСКАЯ СТРЕЛКА ============
+    drawDynamicArrow(ctx, width, height, pulse);
+  }
+  
+  // Рисуем динамическую стрелку с кривой траекторией
+  function drawDynamicArrow(ctx, width, height, pulse) {
+    if (graphPoints.length < 5 || graphCrashed) return;
+    
+    // Коэффициент кривизны зависит от скорости роста
+    const bendFactor = Math.min(currentMultiplier / 10, 1) * 0.3; // 0-0.3
+    
+    // РИСУЕМ СТРЕЛКУ ПО КРИВОЙ (последние 40% точек)
+    const arrowPoints = [];
+    const arrowStartIndex = Math.max(0, Math.floor(graphPoints.length * 0.6));
+    
+    for (let i = arrowStartIndex; i < graphPoints.length; i++) {
+      arrowPoints.push({
+        x: graphPoints[i].x,
+        y: graphPoints[i].y + pulse
+      });
+    }
+    
+    if (arrowPoints.length < 2) return;
+    
+    // Создаем градиент для стрелки
+    const lastPoint = arrowPoints[arrowPoints.length - 1];
+    const firstPoint = arrowPoints[0];
+    
+    const gradient = ctx.createLinearGradient(
+      firstPoint.x, firstPoint.y,
+      lastPoint.x, lastPoint.y
+    );
+    gradient.addColorStop(0, 'rgba(255, 29, 80, 0.2)');
+    gradient.addColorStop(0.5, 'rgba(255, 29, 80, 0.6)');
+    gradient.addColorStop(1, 'rgba(255, 29, 80, 1)');
+    
+    // Рисуем толстую линию стрелки с градиентом
+    ctx.beginPath();
+    ctx.moveTo(arrowPoints[0].x, arrowPoints[0].y);
+    
+    for (let i = 1; i < arrowPoints.length; i++) {
+      ctx.lineTo(arrowPoints[i].x, arrowPoints[i].y);
+    }
+    
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = 8;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.shadowColor = 'rgba(255, 29, 80, 0.8)';
+    ctx.shadowBlur = 20;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    
+    // Рисуем наконечник стрелки
+    if (arrowPoints.length >= 2) {
+      const p1 = arrowPoints[arrowPoints.length - 2];
+      const p2 = arrowPoints[arrowPoints.length - 1];
+      
+      // Угол стрелки
+      const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+      const arrowSize = 20 + currentMultiplier * 2; // Размер растет с множителем
+      
+      // Точки наконечника
+      const arrowPoint1 = {
+        x: p2.x - arrowSize * Math.cos(angle - Math.PI / 6),
+        y: p2.y - arrowSize * Math.sin(angle - Math.PI / 6)
+      };
+      const arrowPoint2 = {
+        x: p2.x - arrowSize * Math.cos(angle + Math.PI / 6),
+        y: p2.y - arrowSize * Math.sin(angle + Math.PI / 6)
+      };
+      
+      // Рисуем наконечник
+      ctx.beginPath();
+      ctx.moveTo(p2.x, p2.y);
+      ctx.lineTo(arrowPoint1.x, arrowPoint1.y);
+      ctx.lineTo(arrowPoint2.x, arrowPoint2.y);
+      ctx.closePath();
+      
+      ctx.fillStyle = '#FF1D50';
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      // Добавляем свечение вокруг наконечника
+      ctx.shadowColor = 'rgba(255, 29, 80, 1)';
+      ctx.shadowBlur = 30;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+    
+    // Добавляем пульсирующие частицы вдоль стрелки
+    const particleInterval = Math.floor(arrowPoints.length / 5);
+    for (let i = 0; i < arrowPoints.length; i += particleInterval) {
+      if (i >= arrowPoints.length) break;
+      
+      const point = arrowPoints[i];
+      const particlePulse = Math.sin(Date.now() / 100 + i * 0.5) * 3;
+      
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 4 + particlePulse, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.shadowColor = 'rgba(255, 29, 80, 1)';
+      ctx.shadowBlur = 15;
+      ctx.fill();
+      ctx.shadowBlur = 0;
     }
   }
   
@@ -805,8 +886,8 @@
     // БЫСТРОЕ СОЗДАНИЕ КРИВОЙ
     const multiplierProgress = Math.min((currentMultiplier - 1.0) / 10.0, 1); // 1x -> 11x
     
-    // X: НАЧИНАЕТСЯ НА 25px ЛЕВЕЕ + быстрый рост
-    const xStart = -5; // Начало левее на 25px
+    // X: НАЧИНАЕТСЯ НА 40px ЛЕВЕЕ + быстрый рост
+    const xStart = -20; // Начало левее на 40px
     const xCurve = Math.pow(multiplierProgress, 0.6); // Быстрый старт
     const x = xStart + (width - xStart - 20) * xCurve;
     
