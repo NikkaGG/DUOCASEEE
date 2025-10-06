@@ -425,35 +425,7 @@
 }
 
 .aviator .union {
-  position: absolute;
-  width: 50px;
-  height: 44px;
-  bottom: 0;
-  left: 385px;
-  z-index: 10;
-  transform-origin: center center;
-  transition: transform 0.05s linear;
-  will-change: transform;
-  filter: brightness(1) saturate(1);
-}
-
-.aviator .union.crashed {
-  animation: flyAway 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-}
-
-@keyframes flyAway {
-  0% {
-    opacity: 1;
-    transform: translateX(var(--final-x, 0px)) rotate(var(--final-rot, 0deg)) translateY(0);
-  }
-  50% {
-    opacity: 0.7;
-    transform: translateX(calc(var(--final-x, 0px) + 50px)) rotate(calc(var(--final-rot, 0deg) + 30deg)) translateY(-100px);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(calc(var(--final-x, 0px) + 150px)) rotate(calc(var(--final-rot, 0deg) + 60deg)) translateY(-250px);
-  }
+  display: none;
 }
 
 .aviator .waiting {

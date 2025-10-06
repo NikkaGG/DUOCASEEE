@@ -35,7 +35,6 @@
     gameEnded: document.querySelector('.game-ended'),
     graphCanvas: null, // Canvas для графика
     graphCtx: null,
-    arrowImg: document.querySelector('.union'), // Стрелка
     
     // Ставка
     betInput: document.querySelector('#betInput'),
@@ -65,11 +64,6 @@
   // Инициализация UI при загрузке
   if (elements.gameEnded) {
     elements.gameEnded.style.display = 'none';
-  }
-  
-  // Скрываем стрелку в начале
-  if (elements.arrowImg) {
-    elements.arrowImg.style.display = 'none';
   }
   
   // Создаем эффект загрузки (стеклянный блюр) - С САМОГО НАЧАЛА
@@ -113,15 +107,6 @@
   let graphPoints = [];
   let graphTime = 0;
   let graphCrashed = false;
-  
-  // Plane image for trail
-  const planeImage = new Image();
-  planeImage.src = 'https://raw.githubusercontent.com/Pacific1a/img/main/crash/Union.png';
-  let planeLoaded = false;
-  planeImage.onload = () => {
-    planeLoaded = true;
-    console.log('✈️ Plane image loaded');
-  };
   
   // Скрываем все блоки при загрузке
   if (elements.multiplierLayer) {
@@ -217,11 +202,6 @@
         elements.graphCanvas.style.display = 'none';
       }
       
-      // Скрываем стрелку
-      if (elements.arrowImg) {
-        elements.arrowImg.style.display = 'none';
-      }
-      
       // Убираем загрузку ТОЛЬКО КОГДА ПОЛУЧЕНЫ ДАННЫЕ
       if (!dataReceived && elements.loadingOverlay) {
         dataReceived = true;
@@ -267,16 +247,6 @@
       // ОЧИЩАЕМ CANVAS
       if (elements.graphCtx && elements.graphCanvas) {
         elements.graphCtx.clearRect(0, 0, elements.graphCanvas.width, elements.graphCanvas.height);
-      }
-      
-      // Показываем и сбрасываем стрелку
-      if (elements.arrowImg) {
-        elements.arrowImg.style.display = 'block';
-        elements.arrowImg.style.transform = 'translateX(0px) rotate(0deg)';
-        elements.arrowImg.style.opacity = '1';
-        elements.arrowImg.classList.remove('crashed');
-        elements.arrowImg.style.removeProperty('--final-x');
-        elements.arrowImg.style.removeProperty('--final-rot');
       }
       
       // Запускаем анимацию
@@ -397,29 +367,6 @@
       graphPoints = [];
       if (elements.graphCtx && elements.graphCanvas) {
         elements.graphCtx.clearRect(0, 0, elements.graphCanvas.width, elements.graphCanvas.height);
-      }
-      
-      // Анимация улёта стрелки
-      if (elements.arrowImg) {
-        // Сохраняем текущую позицию для анимации
-        const currentTransform = elements.arrowImg.style.transform || 'translateX(0px) rotate(0deg)';
-        const xMatch = currentTransform.match(/translateX\(([^)]+)\)/);
-        const rotMatch = currentTransform.match(/rotate\(([^)]+)\)/);
-        const currentX = xMatch ? xMatch[1] : '0px';
-        const currentRot = rotMatch ? rotMatch[1] : '0deg';
-        
-        // Устанавливаем CSS переменные для анимации
-        elements.arrowImg.style.setProperty('--final-x', currentX);
-        elements.arrowImg.style.setProperty('--final-rot', currentRot);
-        
-        // Запускаем анимацию улёта
-        elements.arrowImg.classList.add('crashed');
-        
-        // Скрываем стрелку после анимации
-        setTimeout(() => {
-          elements.arrowImg.style.display = 'none';
-          elements.arrowImg.classList.remove('crashed');
-        }, 800);
       }
       
       // Показываем "Round ended"
@@ -857,9 +804,29 @@
       ctx.fill();
     }
     
-    // ТОЧКА НА КОНЦЕ С ПУЛЬСАЦИЕЙ
+    // ИНДИКАТОРНАЯ ЛИНИЯ ОТ ФИКСИРОВАННОЙ ТОЧКИ ДО КОНЦА ГРАФИКА
     if (!graphCrashed && graphPoints.length > 0) {
       const lastPoint = graphPoints[graphPoints.length - 1];
+      
+      // Фиксированная точка внизу слева (соответствует 385px в CSS при типичном viewport ~390-400px)
+      // Canvas ширина 400px, поэтому 385px пропорционально будет ~320px в canvas
+      const fixedX = 320;
+      const fixedY = height - 5; // Чуть выше низа
+      
+      // Рисуем линию от фиксированной точки до текущей позиции графика
+      ctx.beginPath();
+      ctx.moveTo(fixedX, fixedY);
+      ctx.lineTo(lastPoint.x, lastPoint.y + pulse);
+      
+      // Стиль линии
+      ctx.strokeStyle = lineColor;
+      ctx.lineWidth = 2;
+      ctx.shadowColor = lineColor;
+      ctx.shadowBlur = 10;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      
+      // ШАРИК НА КОНЦЕ ЛИНИИ С ПУЛЬСАЦИЕЙ
       const pointPulse = Math.sin(Date.now() / 150) * 3 + 8;
       
       // Внешнее свечение
@@ -874,7 +841,7 @@
       ctx.fillStyle = glowGradient;
       ctx.fill();
       
-      // Основная точка
+      // Основной шарик
       ctx.beginPath();
       ctx.arc(lastPoint.x, lastPoint.y + pulse, pointPulse, 0, Math.PI * 2);
       ctx.fillStyle = lineColor;
@@ -883,6 +850,15 @@
       // Белая обводка
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      // Фиксированная точка внизу (маленький круг)
+      ctx.beginPath();
+      ctx.arc(fixedX, fixedY, 4, 0, Math.PI * 2);
+      ctx.fillStyle = lineColor;
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1;
       ctx.stroke();
     }
   }
@@ -903,28 +879,8 @@
       }
       
       drawGraph();   // Рисуем каждый кадр (пульсация работает!)
-      updateArrowPosition(); // Обновляем позицию стрелки
       animationFrameId = requestAnimationFrame(animateGraph);
     }
-  }
-  
-  // Функция для обновления позиции стрелки
-  function updateArrowPosition() {
-    if (!elements.arrowImg) return;
-    
-    // Плавное движение вправо в зависимости от коэффициента
-    // Чем больше коэффициент, тем дальше вправо движется стрелка
-    const maxMultiplier = 10.0;
-    const multiplierProgress = Math.min((currentMultiplier - 1.0) / (maxMultiplier - 1.0), 1);
-    
-    // Движение от 0 до ~100px вправо
-    const maxOffset = 100;
-    const offsetX = maxOffset * multiplierProgress;
-    
-    // Небольшой угол наклона в зависимости от скорости роста
-    const rotation = Math.min(multiplierProgress * 15, 15); // До 15 градусов
-    
-    elements.arrowImg.style.transform = `translateX(${offsetX}px) rotate(${rotation}deg)`;
   }
   
   function updateGraph() {
