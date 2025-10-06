@@ -1,0 +1,15 @@
+{
+  "name": "telegram-games",
+  "version": "1.0.0",
+  "description": "Telegram Mini App Games",
+  "scripts": {
+    "start": "cd server && node server.js",
+    "install-server": "cd server && npm install"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["telegram", "games"],
+  "author": "",
+  "license": "MIT"
+}
