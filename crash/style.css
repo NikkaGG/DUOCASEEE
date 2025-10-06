@@ -400,6 +400,12 @@
   pointer-events: none;
 }
 
+/* Canvas graph styling */
+#crashGraph {
+  filter: drop-shadow(0 0 8px rgba(255, 29, 80, 0.3));
+  transition: filter 0.3s ease;
+}
+
 .aviator .game::before {
   content: "";
   position: absolute;
@@ -594,6 +600,7 @@
   color: #ffffff;
   filter: drop-shadow(0 0 40px rgba(255,255,255,0.9));
   display: block;
+  animation: multiplierPulse 2s ease-in-out infinite;
   
   /* ОПТИМИЗАЦИЯ - убираем лаги */
   will-change: contents;
@@ -601,10 +608,33 @@
   transform: translateZ(0);
 }
 
+/* Анимация пульсации множителя */
+@keyframes multiplierPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 40px rgba(255,255,255,0.9));
+  }
+  50% {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 60px rgba(255,255,255,1));
+  }
+}
+
 /* Crash visual state */
 .multiplier-label.crashed {
   color: #ff2b52;
   text-shadow: 0 0 24px rgba(255,43,82,0.8), 0 0 60px rgba(255,43,82,0.5);
+  animation: crashShake 0.5s ease-in-out;
+}
+
+/* Анимация краша */
+@keyframes crashShake {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  10% { transform: translate(-5px, 2px) scale(1.1); }
+  20% { transform: translate(5px, -2px) scale(0.9); }
+  30% { transform: translate(-3px, 1px) scale(1.05); }
+  40% { transform: translate(3px, -1px) scale(0.95); }
+  50% { transform: translate(-2px, 0px) scale(1); }
 }
 
 /* Loading bar rectangle width will be controlled by JS */
