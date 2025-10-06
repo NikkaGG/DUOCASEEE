@@ -33,6 +33,8 @@
     multiplierLayer: document.getElementById('multiplierLayer'),
     currentMultiplier: document.getElementById('currentMultiplier'),
     gameEnded: document.querySelector('.game-ended'),
+    arrowLayer: document.getElementById('arrowLayer'),
+    crashArrow: document.getElementById('crashArrow'),
     graphCanvas: null, // Canvas для графика
     graphCtx: null,
     
@@ -102,11 +104,107 @@
     elements.graphCanvas = canvas;
     elements.graphCtx = canvas.getContext('2d');
   }
+
+  const arrowController = createArrowController();
   
   // Данные графика
   let graphPoints = [];
   let graphTime = 0;
   let graphCrashed = false;
+
+  function createArrowController() {
+    const arrow = elements.crashArrow;
+    const layer = elements.arrowLayer;
+
+    if (!arrow || !layer || !gameContainer) {
+      return {
+        start() {},
+        update() {},
+        crash() {},
+        reset() {}
+      };
+    }
+
+    const flame = arrow.querySelector('.arrow-flame');
+    const MIN_MULTIPLIER = 1;
+    const MAX_MULTIPLIER = 6;
+    let pendingMultiplier = MIN_MULTIPLIER;
+    let travelDistance = Math.max(gameContainer.clientHeight - 96, 140);
+    let rafId = null;
+
+    const scheduleResizeUpdate = () => {
+      travelDistance = Math.max(gameContainer.clientHeight - 96, 140);
+      if (arrow.classList.contains('is-active')) {
+        requestApply();
+      }
+    };
+
+    const applyTransform = () => {
+      rafId = null;
+      const normalized = Math.min(Math.max((pendingMultiplier - MIN_MULTIPLIER) / (MAX_MULTIPLIER - MIN_MULTIPLIER), 0), 1);
+      const eased = normalized > 0 ? Math.pow(normalized, 0.82) : 0;
+      const offset = eased * travelDistance;
+      arrow.style.transform = `translate3d(-50%, ${-offset.toFixed(2)}px, 0)`;
+      if (flame) {
+        flame.style.setProperty('--fire-scale', (1 + normalized * 0.32).toFixed(3));
+      }
+    };
+
+    const requestApply = () => {
+      if (!rafId) {
+        rafId = requestAnimationFrame(applyTransform);
+      }
+    };
+
+    window.addEventListener('resize', () => {
+      scheduleResizeUpdate();
+    }, { passive: true });
+
+    const controller = {
+      start() {
+        travelDistance = Math.max(gameContainer.clientHeight - 96, 140);
+        pendingMultiplier = MIN_MULTIPLIER;
+        arrow.classList.remove('is-crashed');
+        arrow.classList.add('is-active');
+        arrow.style.transform = 'translate3d(-50%, 0px, 0)';
+        if (flame) {
+          flame.style.setProperty('--fire-scale', '1');
+        }
+      },
+      update(multiplier) {
+        pendingMultiplier = multiplier;
+        if (arrow.classList.contains('is-active')) {
+          requestApply();
+        }
+      },
+      crash() {
+        if (!arrow.classList.contains('is-active')) return;
+        arrow.classList.add('is-crashed');
+        arrow.classList.remove('is-active');
+        pendingMultiplier = MIN_MULTIPLIER;
+        if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+      },
+      reset() {
+        if (rafId) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+        pendingMultiplier = MIN_MULTIPLIER;
+        arrow.classList.remove('is-active');
+        arrow.classList.remove('is-crashed');
+        arrow.style.transform = 'translate3d(-50%, 0px, 0)';
+        if (flame) {
+          flame.style.setProperty('--fire-scale', '1');
+        }
+      }
+    };
+
+    controller.reset();
+    return controller;
+  }
   
   // Plane image for trail
   const planeImage = new Image();
@@ -230,6 +328,8 @@
       if (elements.multiplierLayer) {
         elements.multiplierLayer.style.display = 'none';
       }
+
+      arrowController.reset();
       
       // Обновляем таймер всегда
       if (elements.waitingTimer) {
@@ -289,6 +389,8 @@
       if (elements.currentMultiplier) {
         elements.currentMultiplier.classList.remove('crashed');
       }
+
+      arrowController.start();
       
       // Скрываем "Round ended"
       if (elements.gameEnded) {
@@ -333,6 +435,8 @@
           lastMultiplierUpdate = now;
         }
       }
+
+      arrowController.update(currentMultiplier);
       
       // График рисуется автоматически через requestAnimationFrame (60 FPS)
       
@@ -367,6 +471,8 @@
     ws.socket.on('crash_ended', (data) => {
       console.log('💥 Краш на:', data.crashPoint);
       gameState = GAME_STATES.CRASHED;
+
+      arrowController.crash();
       
       // Краш графика
       graphCrashed = true;
@@ -745,115 +851,6 @@
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 2;
       ctx.stroke();
-    }
-    
-    // ============ ДИНАМИЧЕСКАЯ СТРЕЛКА ============
-    drawDynamicArrow(ctx, width, height, pulse);
-  }
-  
-  // Рисуем динамическую стрелку с кривой траекторией
-  function drawDynamicArrow(ctx, width, height, pulse) {
-    if (graphPoints.length < 5 || graphCrashed) return;
-    
-    // Коэффициент кривизны зависит от скорости роста
-    const bendFactor = Math.min(currentMultiplier / 10, 1) * 0.3; // 0-0.3
-    
-    // РИСУЕМ СТРЕЛКУ ПО КРИВОЙ (последние 40% точек)
-    const arrowPoints = [];
-    const arrowStartIndex = Math.max(0, Math.floor(graphPoints.length * 0.6));
-    
-    for (let i = arrowStartIndex; i < graphPoints.length; i++) {
-      arrowPoints.push({
-        x: graphPoints[i].x,
-        y: graphPoints[i].y + pulse
-      });
-    }
-    
-    if (arrowPoints.length < 2) return;
-    
-    // Создаем градиент для стрелки
-    const lastPoint = arrowPoints[arrowPoints.length - 1];
-    const firstPoint = arrowPoints[0];
-    
-    const gradient = ctx.createLinearGradient(
-      firstPoint.x, firstPoint.y,
-      lastPoint.x, lastPoint.y
-    );
-    gradient.addColorStop(0, 'rgba(255, 29, 80, 0.2)');
-    gradient.addColorStop(0.5, 'rgba(255, 29, 80, 0.6)');
-    gradient.addColorStop(1, 'rgba(255, 29, 80, 1)');
-    
-    // Рисуем толстую линию стрелки с градиентом
-    ctx.beginPath();
-    ctx.moveTo(arrowPoints[0].x, arrowPoints[0].y);
-    
-    for (let i = 1; i < arrowPoints.length; i++) {
-      ctx.lineTo(arrowPoints[i].x, arrowPoints[i].y);
-    }
-    
-    ctx.strokeStyle = gradient;
-    ctx.lineWidth = 8;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.shadowColor = 'rgba(255, 29, 80, 0.8)';
-    ctx.shadowBlur = 20;
-    ctx.stroke();
-    ctx.shadowBlur = 0;
-    
-    // Рисуем наконечник стрелки
-    if (arrowPoints.length >= 2) {
-      const p1 = arrowPoints[arrowPoints.length - 2];
-      const p2 = arrowPoints[arrowPoints.length - 1];
-      
-      // Угол стрелки
-      const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
-      const arrowSize = 20 + currentMultiplier * 2; // Размер растет с множителем
-      
-      // Точки наконечника
-      const arrowPoint1 = {
-        x: p2.x - arrowSize * Math.cos(angle - Math.PI / 6),
-        y: p2.y - arrowSize * Math.sin(angle - Math.PI / 6)
-      };
-      const arrowPoint2 = {
-        x: p2.x - arrowSize * Math.cos(angle + Math.PI / 6),
-        y: p2.y - arrowSize * Math.sin(angle + Math.PI / 6)
-      };
-      
-      // Рисуем наконечник
-      ctx.beginPath();
-      ctx.moveTo(p2.x, p2.y);
-      ctx.lineTo(arrowPoint1.x, arrowPoint1.y);
-      ctx.lineTo(arrowPoint2.x, arrowPoint2.y);
-      ctx.closePath();
-      
-      ctx.fillStyle = '#FF1D50';
-      ctx.fill();
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      
-      // Добавляем свечение вокруг наконечника
-      ctx.shadowColor = 'rgba(255, 29, 80, 1)';
-      ctx.shadowBlur = 30;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    }
-    
-    // Добавляем пульсирующие частицы вдоль стрелки
-    const particleInterval = Math.floor(arrowPoints.length / 5);
-    for (let i = 0; i < arrowPoints.length; i += particleInterval) {
-      if (i >= arrowPoints.length) break;
-      
-      const point = arrowPoints[i];
-      const particlePulse = Math.sin(Date.now() / 100 + i * 0.5) * 3;
-      
-      ctx.beginPath();
-      ctx.arc(point.x, point.y, 4 + particlePulse, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-      ctx.shadowColor = 'rgba(255, 29, 80, 1)';
-      ctx.shadowBlur = 15;
-      ctx.fill();
-      ctx.shadowBlur = 0;
     }
   }
   
