@@ -96,23 +96,34 @@
     canvas.style.left = '0';
     canvas.style.width = '100%';
     canvas.style.height = '100%';
-    canvas.style.pointerEvents = 'none';
     canvas.style.display = 'none';
     gameContainer.appendChild(canvas);
     elements.graphCanvas = canvas;
     elements.graphCtx = canvas.getContext('2d');
   }
-  
-  // Данные графика
-  let graphPoints = [];
-  let graphTime = 0;
-  let graphCrashed = false;
-  
+
+  // Экземпляр графика
+  let crashGraphInstance = null;
+
+  if (typeof CrashGraphAnimation !== 'undefined' && elements.graphCanvas) {
+    crashGraphInstance = new CrashGraphAnimation('crashGraph', {
+      useExternalMultiplier: true,
+      baseGrowth: 0.0001,
+      maxPoints: 140,
+      trailLength: 10,
+      particleCount: 45,
+      growColor: '#00ff88',
+      crashColor: '#ff3366',
+      glowSize: 22,
+      lineWidth: 3.5
+    });
+  }
+
   // Скрываем все блоки при загрузке
   if (elements.multiplierLayer) {
     elements.multiplierLayer.style.display = 'none';
   }
-  
+
   if (elements.waitingRoot) {
     elements.waitingRoot.style.display = 'none';
     
@@ -190,15 +201,11 @@
       console.log('⏳ Ожидание:', data.timeLeft);
       gameState = GAME_STATES.WAITING;
       
-      // ОЧИЩАЕМ ГРАФИК при ожидании
-      graphPoints = [];
-      graphCrashed = true; // Останавливаем анимацию
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-        animationFrameId = null;
+      if (crashGraphInstance) {
+        crashGraphInstance.reset();
+        crashGraphInstance.stop();
       }
-      if (elements.graphCtx && elements.graphCanvas) {
-        elements.graphCtx.clearRect(0, 0, elements.graphCanvas.width, elements.graphCanvas.height);
+      if (elements.graphCanvas) {
         elements.graphCanvas.style.display = 'none';
       }
       
@@ -238,20 +245,11 @@
       console.log('🚀 Crash начался!');
       gameState = GAME_STATES.FLYING;
       
-      // ОЧИЩАЕМ ГРАФИК
-      graphPoints = [];
-      graphTime = 0;
-      graphCrashed = false;
-      graphStartTime = Date.now();
-      
-      // ОЧИЩАЕМ CANVAS
-      if (elements.graphCtx && elements.graphCanvas) {
-        elements.graphCtx.clearRect(0, 0, elements.graphCanvas.width, elements.graphCanvas.height);
+      if (crashGraphInstance) {
+        const startTimestamp = data?.startTime ? Date.parse(data.startTime) : Date.now();
+        crashGraphInstance.reset();
+        crashGraphInstance.start(startTimestamp);
       }
-      
-      // Запускаем анимацию
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
-      animateGraph();
       
       // Показываем canvas
       if (elements.graphCanvas) {
@@ -300,6 +298,10 @@
     let lastMultiplierValue = '1.00x';
     ws.socket.on('crash_multiplier', (data) => {
       currentMultiplier = data.multiplier;
+      
+      if (crashGraphInstance) {
+        crashGraphInstance.setExternalMultiplier(currentMultiplier);
+      }
       
       // ПЛАВНЫЙ НАБОР ЦИФР (по 0.01 в начале, по 0.02 выше)
       const now = Date.now();
@@ -359,14 +361,8 @@
       console.log('💥 Краш на:', data.crashPoint);
       gameState = GAME_STATES.CRASHED;
       
-      // Краш графика
-      graphCrashed = true;
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
-      
-      // ОЧИЩАЕМ СРАЗУ ПОСЛЕ КРАША
-      graphPoints = [];
-      if (elements.graphCtx && elements.graphCanvas) {
-        elements.graphCtx.clearRect(0, 0, elements.graphCanvas.width, elements.graphCanvas.height);
+      if (crashGraphInstance) {
+        crashGraphInstance.crash(data?.crashPoint);
       }
       
       // Показываем "Round ended"
@@ -378,6 +374,9 @@
       setTimeout(() => {
         if (elements.graphCanvas) {
           elements.graphCanvas.style.display = 'none';
+        }
+        if (crashGraphInstance) {
+          crashGraphInstance.stop();
         }
       }, 3000);
       
