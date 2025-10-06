@@ -33,8 +33,6 @@
     multiplierLayer: document.getElementById('multiplierLayer'),
     currentMultiplier: document.getElementById('currentMultiplier'),
     gameEnded: document.querySelector('.game-ended'),
-    arrowLayer: document.getElementById('arrowLayer'),
-    crashArrow: document.getElementById('crashArrow'),
     graphCanvas: null, // Canvas для графика
     graphCtx: null,
     
@@ -104,107 +102,11 @@
     elements.graphCanvas = canvas;
     elements.graphCtx = canvas.getContext('2d');
   }
-
-  const arrowController = createArrowController();
   
   // Данные графика
   let graphPoints = [];
   let graphTime = 0;
   let graphCrashed = false;
-
-  function createArrowController() {
-    const arrow = elements.crashArrow;
-    const layer = elements.arrowLayer;
-
-    if (!arrow || !layer || !gameContainer) {
-      return {
-        start() {},
-        update() {},
-        crash() {},
-        reset() {}
-      };
-    }
-
-    const flame = arrow.querySelector('.arrow-flame');
-    const MIN_MULTIPLIER = 1;
-    const MAX_MULTIPLIER = 6;
-    let pendingMultiplier = MIN_MULTIPLIER;
-    let travelDistance = Math.max(gameContainer.clientHeight - 96, 140);
-    let rafId = null;
-
-    const scheduleResizeUpdate = () => {
-      travelDistance = Math.max(gameContainer.clientHeight - 96, 140);
-      if (arrow.classList.contains('is-active')) {
-        requestApply();
-      }
-    };
-
-    const applyTransform = () => {
-      rafId = null;
-      const normalized = Math.min(Math.max((pendingMultiplier - MIN_MULTIPLIER) / (MAX_MULTIPLIER - MIN_MULTIPLIER), 0), 1);
-      const eased = normalized > 0 ? Math.pow(normalized, 0.82) : 0;
-      const offset = eased * travelDistance;
-      arrow.style.transform = `translate3d(-50%, ${-offset.toFixed(2)}px, 0)`;
-      if (flame) {
-        flame.style.setProperty('--fire-scale', (1 + normalized * 0.32).toFixed(3));
-      }
-    };
-
-    const requestApply = () => {
-      if (!rafId) {
-        rafId = requestAnimationFrame(applyTransform);
-      }
-    };
-
-    window.addEventListener('resize', () => {
-      scheduleResizeUpdate();
-    }, { passive: true });
-
-    const controller = {
-      start() {
-        travelDistance = Math.max(gameContainer.clientHeight - 96, 140);
-        pendingMultiplier = MIN_MULTIPLIER;
-        arrow.classList.remove('is-crashed');
-        arrow.classList.add('is-active');
-        arrow.style.transform = 'translate3d(-50%, 0px, 0)';
-        if (flame) {
-          flame.style.setProperty('--fire-scale', '1');
-        }
-      },
-      update(multiplier) {
-        pendingMultiplier = multiplier;
-        if (arrow.classList.contains('is-active')) {
-          requestApply();
-        }
-      },
-      crash() {
-        if (!arrow.classList.contains('is-active')) return;
-        arrow.classList.add('is-crashed');
-        arrow.classList.remove('is-active');
-        pendingMultiplier = MIN_MULTIPLIER;
-        if (rafId) {
-          cancelAnimationFrame(rafId);
-          rafId = null;
-        }
-      },
-      reset() {
-        if (rafId) {
-          cancelAnimationFrame(rafId);
-          rafId = null;
-        }
-        pendingMultiplier = MIN_MULTIPLIER;
-        arrow.classList.remove('is-active');
-        arrow.classList.remove('is-crashed');
-        arrow.style.transform = 'translate3d(-50%, 0px, 0)';
-        if (flame) {
-          flame.style.setProperty('--fire-scale', '1');
-        }
-      }
-    };
-
-    controller.reset();
-    return controller;
-  }
   
   // Plane image for trail
   const planeImage = new Image();
@@ -328,8 +230,6 @@
       if (elements.multiplierLayer) {
         elements.multiplierLayer.style.display = 'none';
       }
-
-      arrowController.reset();
       
       // Обновляем таймер всегда
       if (elements.waitingTimer) {
@@ -389,8 +289,6 @@
       if (elements.currentMultiplier) {
         elements.currentMultiplier.classList.remove('crashed');
       }
-
-      arrowController.start();
       
       // Скрываем "Round ended"
       if (elements.gameEnded) {
@@ -435,8 +333,6 @@
           lastMultiplierUpdate = now;
         }
       }
-
-      arrowController.update(currentMultiplier);
       
       // График рисуется автоматически через requestAnimationFrame (60 FPS)
       
@@ -471,8 +367,6 @@
     ws.socket.on('crash_ended', (data) => {
       console.log('💥 Краш на:', data.crashPoint);
       gameState = GAME_STATES.CRASHED;
-
-      arrowController.crash();
       
       // Краш графика
       graphCrashed = true;

@@ -2,9 +2,9 @@ services:
   - type: web
     name: telegram-games
     env: node
-    rootDir: .
-    buildCommand: npm run install-server
-    startCommand: npm start
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node server.js
     envVars:
       - key: NODE_ENV
         value: production
