@@ -35,6 +35,7 @@
     gameEnded: document.querySelector('.game-ended'),
     graphCanvas: null, // Canvas для графика
     graphCtx: null,
+    arrowImg: document.querySelector('.union'), // Стрелка
     
     // Ставка
     betInput: document.querySelector('#betInput'),
@@ -64,6 +65,11 @@
   // Инициализация UI при загрузке
   if (elements.gameEnded) {
     elements.gameEnded.style.display = 'none';
+  }
+  
+  // Скрываем стрелку в начале
+  if (elements.arrowImg) {
+    elements.arrowImg.style.display = 'none';
   }
   
   // Создаем эффект загрузки (стеклянный блюр) - С САМОГО НАЧАЛА
@@ -211,6 +217,11 @@
         elements.graphCanvas.style.display = 'none';
       }
       
+      // Скрываем стрелку
+      if (elements.arrowImg) {
+        elements.arrowImg.style.display = 'none';
+      }
+      
       // Убираем загрузку ТОЛЬКО КОГДА ПОЛУЧЕНЫ ДАННЫЕ
       if (!dataReceived && elements.loadingOverlay) {
         dataReceived = true;
@@ -256,6 +267,12 @@
       // ОЧИЩАЕМ CANVAS
       if (elements.graphCtx && elements.graphCanvas) {
         elements.graphCtx.clearRect(0, 0, elements.graphCanvas.width, elements.graphCanvas.height);
+      }
+      
+      // Показываем и сбрасываем стрелку
+      if (elements.arrowImg) {
+        elements.arrowImg.style.display = 'block';
+        elements.arrowImg.style.transform = 'translateX(0px) rotate(0deg)';
       }
       
       // Запускаем анимацию
@@ -376,6 +393,11 @@
       graphPoints = [];
       if (elements.graphCtx && elements.graphCanvas) {
         elements.graphCtx.clearRect(0, 0, elements.graphCanvas.width, elements.graphCanvas.height);
+      }
+      
+      // Скрываем стрелку
+      if (elements.arrowImg) {
+        elements.arrowImg.style.display = 'none';
       }
       
       // Показываем "Round ended"
@@ -859,8 +881,28 @@
       }
       
       drawGraph();   // Рисуем каждый кадр (пульсация работает!)
+      updateArrowPosition(); // Обновляем позицию стрелки
       animationFrameId = requestAnimationFrame(animateGraph);
     }
+  }
+  
+  // Функция для обновления позиции стрелки
+  function updateArrowPosition() {
+    if (!elements.arrowImg) return;
+    
+    // Плавное движение вправо в зависимости от коэффициента
+    // Чем больше коэффициент, тем дальше вправо движется стрелка
+    const maxMultiplier = 10.0;
+    const multiplierProgress = Math.min((currentMultiplier - 1.0) / (maxMultiplier - 1.0), 1);
+    
+    // Движение от 0 до ~100px вправо
+    const maxOffset = 100;
+    const offsetX = maxOffset * multiplierProgress;
+    
+    // Небольшой угол наклона в зависимости от скорости роста
+    const rotation = Math.min(multiplierProgress * 15, 15); // До 15 градусов
+    
+    elements.arrowImg.style.transform = `translateX(${offsetX}px) rotate(${rotation}deg)`;
   }
   
   function updateGraph() {
