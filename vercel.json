@@ -1,0 +1,66 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "**/*.js",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "**/*.css",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/roll/(.*)",
+      "dest": "/roll/$1"
+    },
+    {
+      "src": "/speedCASH/(.*)",
+      "dest": "/speedCASH/$1"
+    },
+    {
+      "src": "/crash/(.*)",
+      "dest": "/crash/$1"
+    },
+    {
+      "src": "/BlackJack/(.*)",
+      "dest": "/BlackJack/$1"
+    },
+    {
+      "src": "/upgrade/(.*)",
+      "dest": "/upgrade/$1"
+    },
+    {
+      "src": "/profile/(.*)",
+      "dest": "/profile/$1"
+    },
+    {
+      "src": "/swap/(.*)",
+      "dest": "/swap/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, OPTIONS"
+        }
+      ]
+    }
+  ]
+}

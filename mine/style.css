@@ -1,0 +1,1733 @@
+.mines {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px;
+  position: relative;
+  background-color: #151414;
+}
+
+.mines .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  flex: 1;
+  gap: 12px;
+  align-self: stretch;
+  width: 100%;
+  flex-grow: 1;
+}
+
+.mines .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+  background-color: transparent;
+}
+
+.mines .account-info {
+  display: inline-flex;
+  max-width: 165px;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.mines .avatar {
+  position: relative;
+  width: 37px;
+  height: 37px;
+  border-radius: 18.5px;
+  box-shadow: 0px 0px 3px #bbbbbb1a, 0px 2px 5px #bbbbbb17, 0px 2px 7px
+    #bbbbbb0d;
+  background: linear-gradient(
+    180deg,
+    rgba(125, 125, 125, 1) 0%,
+    rgba(162, 162, 162, 1) 100%
+  );
+}
+
+.mines .dev {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.mines .text-wrapper {
+  position: relative;
+  width: fit-content;
+  margin-top: -1.00px;
+  text-shadow: 0px 0px 7px #ffffff38;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 1) 0%,
+    rgba(230, 230, 230, 1) 100%
+  );
+  -webkit-background-clip: text !important;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: transparent;
+  font-size: 15px;
+  letter-spacing: -0.75px;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.mines .frame {
+  display: inline-flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 10px;
+  flex: 0 0 auto;
+  border-radius: 10px;
+  border: 1.5px solid;
+  border-color: #363535;
+  align-items: center;
+  position: relative;
+}
+
+.mines .img {
+  position: relative;
+  width: 12px;
+  height: 12px;
+}
+
+.mines .div {
+  position: relative;
+  width: fit-content;
+  margin-top: -1.50px;
+  text-shadow: 0px 0px 8px #6b6b6b38;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #6a6a6a;
+  font-size: 15px;
+  letter-spacing: -0.45px;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.mines .balance {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  box-shadow:
+    0px 2px 5px #803e3e0d, 0px 9px 9px #803e3e0a, 0px 20px 12px #803e3e08, 0px 35px 14px #803e3e03, 0px 55px 15px transparent;
+  display: inline-flex;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.mines .div-wrapper {
+  max-width: 130px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  display: inline-flex;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.mines .text-wrapper-2 {
+  position: relative;
+  flex: 1;
+  height: 18px;
+  text-shadow: 0px 0px 7px #ffffff38;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #c2c2c2;
+  font-size: 15px;
+  text-align: right;
+  letter-spacing: 0;
+  line-height: normal;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.mines .text-wrapper-3 {
+  position: relative;
+  flex: 1;
+  text-shadow: 0px 0px 7px #ca395938;
+  font-weight: 600;
+  color: #ca3958;
+  font-size: 15px;
+  text-align: right;
+  letter-spacing: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  font-family: "Montserrat", Helvetica;
+  line-height: normal;
+}
+
+.mines .game {
+  display: flex;
+  flex-direction: column;
+  height: 368px;
+  align-items: center;
+  justify-content: space-around;
+  gap: 10px;
+  padding: 8px 12px;
+  width: 100%;
+  margin-left: -1.00px;
+  margin-right: -1.00px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: none;
+  box-shadow: 0px 10px 10px #171616;
+  background: linear-gradient(
+    90deg,
+    rgba(31, 29, 29, 1) 0%,
+    rgba(36, 31, 31, 1) 100%
+  );
+  position: relative;
+  align-self: stretch;
+}
+
+.mines .game::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 20px;
+  background: linear-gradient(
+    90deg,
+    rgba(34, 34, 34, 1) 0%,
+    rgba(47, 47, 47, 1) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.mines .tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  flex: 1;
+  align-self: stretch;
+  width: 100%;
+  flex-grow: 1;
+  box-shadow: 0px 4px 8px #16141438;
+}
+
+.mines .div-2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  flex: 1;
+  align-self: stretch;
+  width: 100%;
+  flex-grow: 1;
+}
+
+.mines .img-2 {
+  position: relative;
+  width: 64.62px;
+  height: 64.62px;
+}
+
+.mines .div-3 {
+  position: relative;
+  width: 64.62px;
+  height: 64.62px;
+  border-radius: 15px;
+  background: linear-gradient(
+    90deg,
+    rgba(22, 20, 20, 1) 0%,
+    rgba(22, 21, 21, 1) 100%
+  );
+}
+
+.mines .info {
+  width: 335px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  flex: 0 0 auto;
+  margin-left: -354.00px;
+  margin-right: -354.00px;
+}
+
+.mines .info-about-multiply {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox hide */
+  -ms-overflow-style: none; /* IE/Edge legacy hide */
+}
+
+.mines .info-about-multiply .element-mine {
+  flex: 0 0 auto;
+}
+
+/* Hide scrollbar track for WebKit on the inner scroller */
+.mines .info-about-multiply::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.mines .element-mine {
+  position: relative;
+  width: 50px;
+  height: 36.62px;
+}
+
+.mines .overlap-group {
+  width: 46px;
+  height: 37px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column-reverse;
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    rgba(31, 29, 29, 1) 0%,
+    rgba(32, 32, 32, 1) 100%
+  );
+}
+
+.mines .text-wrapper-4 {
+  width: 22px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.mines .text-wrapper-5 {
+  width: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  white-space: nowrap;
+  font-family: "Montserrat", Helvetica;
+  line-height: normal;
+}
+
+.mines .mine-icon {
+  top: -447px;
+  left: -2806px;
+  position: absolute;
+  width: 6px;
+  height: 7px;
+}
+
+.mines .text-wrapper-6 {
+  position: absolute;
+  width: 17px;
+  top: 18px;
+  left: 14px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.mines .text-wrapper-7 {
+  position: absolute;
+  width: 5px;
+  top: 5px;
+  left: 16px;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  white-space: nowrap;
+  font-family: "Montserrat", Helvetica;
+  line-height: normal;
+}
+
+.mines .mine-icon-2 {
+  position: absolute;
+  width: 6px;
+  height: 7px;
+  top: -447px;
+  left: -2805px;
+}
+
+.mines .text-wrapper-8 {
+  position: absolute;
+  width: 21px;
+  top: 18px;
+  left: 12px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.mines .text-wrapper-9 {
+  position: absolute;
+  width: 23px;
+  top: 18px;
+  left: 11px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.mines .text-wrapper-10 {
+  position: absolute;
+  width: 5px;
+  top: 5px;
+  left: 16px;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  font-family: "Montserrat", Helvetica;
+  line-height: normal;
+}
+
+.mines .overlap {
+  position: relative;
+  width: 46px;
+  height: 37px;
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    rgba(31, 29, 29, 1) 0%,
+    rgba(32, 32, 32, 1) 100%
+  );
+}
+
+.mines .text-wrapper-11 {
+  position: absolute;
+  width: 25px;
+  top: 18px;
+  left: 10px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.mines .mine-icon-3 {
+  top: 7px;
+  left: 23px;
+  position: absolute;
+  width: 6px;
+  height: 7px;
+}
+
+.mines .text-wrapper-12 {
+  position: absolute;
+  width: 23px;
+  top: 18px;
+  left: 11px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  line-height: normal;
+}
+
+.mines .text-wrapper-13 {
+  position: absolute;
+  width: 24px;
+  top: 18px;
+  left: 11px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  line-height: normal;
+}
+
+.mines .text-wrapper-14 {
+  position: absolute;
+  width: 10px;
+  top: 5px;
+  left: 15px;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  font-family: "Montserrat", Helvetica;
+  line-height: normal;
+}
+
+.mines .mine-icon-4 {
+  top: 7px;
+  left: 25px;
+  position: absolute;
+  width: 6px;
+  height: 7px;
+}
+
+.mines .text-wrapper-15 {
+  position: absolute;
+  width: 7px;
+  top: 5px;
+  left: 15px;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  font-family: "Montserrat", Helvetica;
+  line-height: normal;
+}
+
+.mines .mine-icon-5 {
+  top: 7px;
+  left: 24px;
+  position: absolute;
+  width: 6px;
+  height: 7px;
+}
+
+.mines .text-wrapper-16 {
+  position: absolute;
+  width: 21px;
+  top: 18px;
+  left: 12px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  line-height: normal;
+}
+
+.mines .text-wrapper-17 {
+  position: absolute;
+  width: 9px;
+  top: 5px;
+  left: 15px;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  font-family: "Montserrat", Helvetica;
+  line-height: normal;
+}
+
+.mines .text-wrapper-18 {
+  position: absolute;
+  width: 10px;
+  top: 5px;
+  left: 14px;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  font-family: "Montserrat", Helvetica;
+  line-height: normal;
+}
+
+.mines .text-wrapper-19 {
+  position: absolute;
+  width: 28px;
+  top: 18px;
+  left: 9px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  line-height: normal;
+}
+
+.mines .mine-icon-6 {
+  top: -447px;
+  left: -2803px;
+  position: absolute;
+  width: 6px;
+  height: 7px;
+}
+
+.mines .text-wrapper-20 {
+  position: absolute;
+  width: 29px;
+  top: 18px;
+  left: 8px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  line-height: normal;
+}
+
+.mines .text-wrapper-21 {
+  position: absolute;
+  width: 12px;
+  top: 5px;
+  left: 13px;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  font-family: "Montserrat", Helvetica;
+  line-height: normal;
+}
+
+.mines .mine-icon-7 {
+  top: -447px;
+  left: -2802px;
+  position: absolute;
+  width: 6px;
+  height: 7px;
+}
+
+.mines .text-wrapper-22 {
+  position: absolute;
+  width: 35px;
+  top: 18px;
+  left: 6px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  line-height: normal;
+}
+
+.mines .text-wrapper-23 {
+  position: absolute;
+  width: 11px;
+  top: 5px;
+  left: 13px;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  font-family: "Montserrat", Helvetica;
+  line-height: normal;
+}
+
+.mines .element-mine-2 {
+  position: relative;
+  width: 50px;
+  height: 36.62px;
+  margin-right: -4.00px;
+}
+
+.mines .text-wrapper-24 {
+  position: absolute;
+  width: 30px;
+  top: 18px;
+  left: 8px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 9px;
+  letter-spacing: -0.27px;
+  line-height: normal;
+}
+
+.mines .bet {
+  flex-direction: column;
+  justify-content: center;
+  gap: 9px;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.mines .bet-2 {
+  justify-content: space-between;
+  padding: 8px 15px;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+  margin-top: -1.00px;
+  margin-left: -1.00px;
+  margin-right: -1.00px;
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0px 10px 10px #171616;
+  background: linear-gradient(
+    90deg,
+    rgba(31, 29, 29, 1) 0%,
+    rgba(32, 32, 32, 1) 100%
+  );
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.mines .bet-2::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 20px;
+  background: linear-gradient(
+    90deg,
+    rgba(34, 34, 34, 1) 0%,
+    rgba(47, 47, 47, 1) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.mines .bet-amount {
+  flex-direction: column;
+  width: 159.32px;
+  justify-content: center;
+  gap: 3px;
+  box-shadow: 0px 4px 8px #16141438;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.mines .input-amount-bet {
+  display: flex;
+  height: 35.4px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 5px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  border-radius: 13.5px;
+  background: linear-gradient(
+    90deg,
+    rgba(22, 20, 20, 1) 0%,
+    rgba(22, 21, 21, 1) 100%
+  );
+}
+
+.mines .button {
+  flex-direction: column;
+  width: 27.23px;
+  height: 27.23px;
+  padding: 12px 8px;
+  background-color: #2a2a2a;
+  border-radius: 13.62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+}
+
+.mines .rectangle {
+  position: relative;
+  width: 10.89px;
+  height: 2.72px;
+  background-color: #7a7a7a;
+  border-radius: 2px;
+}
+
+.mines .element {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 10px;
+  position: relative;
+  flex: 1;
+  flex-grow: 1;
+}
+
+.mines .element-2 {
+  position: relative;
+  width: 46.38px;
+  height: 40.08px;
+  margin-top: -10.94px;
+  margin-bottom: -12.14px;
+}
+
+.mines .union-wrapper {
+  width: 27.23px;
+  height: 27.23px;
+  padding: 8px;
+  background-color: #2a2a2a;
+  border-radius: 13.62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+}
+
+.mines .union {
+  position: relative;
+  width: 10.89px;
+  height: 10.89px;
+}
+
+.mines .button-x {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.mines .button-2 {
+  all: unset;
+  box-sizing: border-box;
+  padding: 5px 0px;
+  flex: 1;
+  flex-grow: 1;
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    rgba(22, 20, 20, 1) 0%,
+    rgba(22, 21, 21, 1) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+}
+
+.mines .text-wrapper-25 {
+  position: relative;
+  flex: 1;
+  margin-top: -1.00px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 12px;
+  text-align: center;
+  letter-spacing: -0.36px;
+  line-height: normal;
+}
+
+.mines .button-3 {
+  height: 25.87px;
+  padding: 5px 0px;
+  flex: 1;
+  flex-grow: 1;
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    rgba(22, 20, 20, 1) 0%,
+    rgba(22, 21, 21, 1) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+}
+
+.mines .text-wrapper-26 {
+  position: relative;
+  flex: 1;
+  margin-top: -0.56px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #7a7a7a;
+  font-size: 12px;
+  text-align: center;
+  letter-spacing: -0.36px;
+  line-height: normal;
+}
+
+.mines .cash-out-button {
+  display: flex;
+  flex-direction: column;
+  width: 175px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 2px;
+  position: relative;
+  align-self: stretch;
+  border-radius: 20px;
+  background: linear-gradient(
+    90deg,
+    rgba(22, 20, 20, 1) 0%,
+    rgba(22, 21, 21, 1) 100%
+  );
+}
+
+.mines .cash-out-button-2 {
+  display: flex;
+  flex-direction: column;
+  width: 171px;
+  height: 64px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 18px;
+  border: 1px solid;
+  border-color: #c7b363;
+  background: linear-gradient(
+    90deg,
+    rgba(135, 116, 64, 1) 0%,
+    rgba(186, 166, 87, 1) 100%
+  );
+}
+
+.mines .text-wrapper-27 {
+  position: relative;
+  align-self: stretch;
+  text-shadow: 0px -4px 22px #ffffff70;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #ffffffb2;
+  font-size: 18px;
+  text-align: center;
+  letter-spacing: -0.54px;
+  line-height: normal;
+}
+
+.mines .text-wrapper-28 {
+  align-self: stretch;
+  text-shadow: 0px 0px 22px #ffffff70;
+  background: linear-gradient(
+    90deg,
+    rgba(249, 227, 145, 0.7) 0%,
+    rgba(228, 206, 126, 0.7) 100%
+  );
+  -webkit-background-clip: text !important;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  color: transparent;
+  font-size: 14px;
+  text-align: center;
+  letter-spacing: -0.42px;
+  position: relative;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.mines .number-of-bombs {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 3px;
+  padding: 7px 15px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+  margin-bottom: -1.00px;
+  margin-left: -1.00px;
+  margin-right: -1.00px;
+  border-radius: 18px;
+  border: none;
+  box-shadow: 0px 10px 10px #171616;
+  background: linear-gradient(
+    90deg,
+    rgba(31, 29, 29, 1) 0%,
+    rgba(32, 32, 32, 1) 100%
+  );
+}
+
+.mines .number-of-bombs::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 18px;
+  background: linear-gradient(
+    90deg,
+    rgba(34, 34, 34, 1) 0%,
+    rgba(47, 47, 47, 1) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.mines .text-wrapper-29 {
+  position: relative;
+  width: fit-content;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 500;
+  color: #525252;
+  font-size: 11px;
+  letter-spacing: -0.33px;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.mines .frame-2 {
+  display: flex;
+  width: 348px;
+  height: 36px;
+  justify-content: space-between;
+  padding: 2px 3px;
+  border-radius: 11px;
+  background: linear-gradient(
+    90deg,
+    rgba(22, 20, 20, 1) 0%,
+    rgba(22, 21, 21, 1) 100%
+  );
+  align-items: center;
+  position: relative;
+}
+
+.mines .element-3 {
+  display: flex;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  flex: 1;
+  flex-grow: 1;
+}
+
+.mines .selected {
+  height: 30px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  flex: 1;
+  flex-grow: 1;
+  background: linear-gradient(
+    90deg,
+    rgba(35, 35, 35, 1) 0%,
+    rgba(46, 46, 46, 1) 100%
+  );
+}
+
+.mines .text-wrapper-30 {
+  position: relative;
+  flex: 1;
+  font-weight: 600;
+  color: #aeaeae;
+  font-size: 12px;
+  text-align: center;
+  letter-spacing: -0.36px;
+  font-family: "Montserrat", Helvetica;
+  line-height: normal;
+}
+
+.mines .div-wrapper-2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  flex: 1;
+  align-self: stretch;
+  flex-grow: 1;
+}
+
+.mines .text-wrapper-31 {
+  position: relative;
+  align-self: stretch;
+  font-weight: 600;
+  color: #525252;
+  font-size: 12px;
+  text-align: center;
+  letter-spacing: -0.36px;
+  font-family: "Montserrat", Helvetica;
+  line-height: normal;
+}
+
+.mines .element-4 {
+  display: flex;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  flex: 1;
+  flex-grow: 1;
+}
+
+.mines .game-info {
+  display: flex;
+  flex-direction: column;
+  height: 226px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 100px;
+  position: relative;
+  align-self: stretch;
+}
+
+.mines .live-bets {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0px;
+  position: relative;
+  flex: 1;
+  align-self: stretch;
+  width: 100%;
+  flex-grow: 1;
+  margin-top: -1.00px;
+  margin-bottom: -1.00px;
+  margin-left: -1.00px;
+  margin-right: -1.00px;
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0px 10px 10px #171616;
+  background: linear-gradient(
+    90deg,
+    rgba(31, 29, 29, 1) 0%,
+    rgba(32, 32, 32, 1) 100%
+  );
+}
+
+.mines .live-bets::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 20px;
+  background: linear-gradient(
+    90deg,
+    rgba(34, 34, 34, 1) 0%,
+    rgba(47, 47, 47, 1) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.mines .section-menu {
+  display: flex;
+  width: 267px;
+  height: 27px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 4px;
+  position: relative;
+  border-radius: 13.5px;
+  background: linear-gradient(
+    90deg,
+    rgba(22, 20, 20, 1) 0%,
+    rgba(22, 21, 21, 1) 100%
+  );
+}
+
+.mines .selected-2 {
+  padding: 4px 0px;
+  align-self: stretch;
+  width: 100%;
+  border-radius: 10.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  flex: 1;
+  flex-grow: 1;
+  background: linear-gradient(
+    90deg,
+    rgba(35, 35, 35, 1) 0%,
+    rgba(46, 46, 46, 1) 100%
+  );
+}
+
+.mines .text-wrapper-32 {
+  position: relative;
+  flex: 1;
+  margin-top: -0.50px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #aeaeae;
+  font-size: 10px;
+  text-align: center;
+  letter-spacing: -0.30px;
+  line-height: normal;
+}
+
+.mines .your-bets {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  position: relative;
+  flex: 1;
+  align-self: stretch;
+  flex-grow: 1;
+}
+
+.mines .not-selected {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  flex: 1;
+  align-self: stretch;
+  flex-grow: 1;
+}
+
+.mines .text-wrapper-33 {
+  position: relative;
+  flex: 1;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #525252;
+  font-size: 10px;
+  text-align: center;
+  letter-spacing: -0.30px;
+  line-height: normal;
+}
+
+.mines .live-bets-2 {
+  display: flex;
+  flex-direction: column;
+  width: 369px;
+  height: 48px;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 11px;
+  position: relative;
+  border-radius: 15px;
+  background: linear-gradient(
+    90deg,
+    rgba(22, 20, 20, 1) 0%,
+    rgba(22, 21, 21, 1) 100%
+  );
+}
+
+.mines .text-wrapper-34 {
+  position: relative;
+  align-self: stretch;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #aeaeae;
+  font-size: 14px;
+  letter-spacing: -0.42px;
+  line-height: normal;
+}
+
+.mines .element-online {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.mines .text-wrapper-35 {
+  flex: 1;
+  margin-top: -1.00px;
+  color: #525252;
+  font-size: 11px;
+  letter-spacing: -0.33px;
+  position: relative;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.mines .frame-3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 0px 8px;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+  align-items: center;
+  position: relative;
+}
+
+.mines .text {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.mines .text-wrapper-36 {
+  position: relative;
+  width: fit-content;
+  margin-top: -1.00px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 500;
+  color: #525252;
+  font-size: 8px;
+  letter-spacing: -0.24px;
+  line-height: normal;
+}
+
+.mines .user-templates {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.mines .div-4 {
+  display: flex;
+  height: 27px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  border-radius: 13.5px;
+  background: linear-gradient(
+      90deg,
+      rgba(22, 20, 20, 1) 0%,
+      rgba(22, 21, 21, 1) 100%
+    )
+   
+}
+
+.mines .acc-inf {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  flex: 1;
+  flex-grow: 1;
+}
+
+.mines .avatar-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 19.05px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+}
+
+.mines .avatar-2 {
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  height: 19px;
+  border-radius: 9.53px / 9.5px;
+  box-shadow: 0px 1px 3px #bbbbbb1a, 0px 1px 5px #bbbbbb17;
+  background: linear-gradient(
+    180deg,
+    rgba(125, 125, 125, 1) 0%,
+    rgba(162, 162, 162, 1) 100%
+  );
+}
+
+.mines .div-wrapper-3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  align-self: stretch;
+  flex-grow: 1;
+  position: relative;
+  flex: 1;
+}
+
+.mines .text-wrapper-37 {
+  font-family: "Montserrat", Helvetica;
+  font-weight: 500;
+  color: #aeaeae;
+  font-size: 10px;
+  letter-spacing: -0.30px;
+  line-height: normal;
+  position: relative;
+  flex: 1;
+}
+
+.mines .text-wrapper-38 {
+  position: relative;
+  flex: 1;
+  font-weight: 500;
+  color: #aeaeae;
+  font-size: 10px;
+  text-align: center;
+  letter-spacing: -0.30px;
+  font-family: "Montserrat", Helvetica;
+  line-height: normal;
+}
+
+.mines .div-wrapper-4 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 3px;
+  position: relative;
+  flex: 1;
+  align-self: stretch;
+  flex-grow: 1;
+}
+
+.mines .text-wrapper-39 {
+  position: relative;
+  flex: 1;
+  margin-top: -0.50px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 500;
+  color: #aeaeae;
+  font-size: 10px;
+  text-align: right;
+  letter-spacing: -0.30px;
+  line-height: normal;
+}
+
+.mines .avatar-3 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.mines .avatar-4 {
+  position: relative;
+  width: 19px;
+  height: 19px;
+  border-radius: 9.5px;
+  box-shadow: 0px 1px 3px #bbbbbb1a, 0px 1px 5px #bbbbbb17;
+  background: linear-gradient(
+    180deg,
+    rgba(125, 125, 125, 1) 0%,
+    rgba(162, 162, 162, 1) 100%
+  );
+}
+
+.mines .text-wrapper-40 {
+  text-shadow: 0px 1px 4px #00000038;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 500;
+  color: #aeaeae;
+  font-size: 10px;
+  letter-spacing: -0.30px;
+  line-height: normal;
+  position: relative;
+  flex: 1;
+}
+
+.mines .text-wrapper-41 {
+  position: relative;
+  flex: 1;
+  text-shadow: 0px 1px 4px #00000038;
+  font-weight: 500;
+  color: #aeaeae;
+  font-size: 10px;
+  text-align: center;
+  letter-spacing: -0.30px;
+  font-family: "Montserrat", Helvetica;
+  line-height: normal;
+}
+
+.mines .element-5 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0px 3px;
+  position: relative;
+  flex: 1;
+  align-self: stretch;
+  flex-grow: 1;
+}
+
+.mines .text-wrapper-42 {
+  position: relative;
+  flex: 1;
+  text-shadow: 0px 1px 4px #00000038;
+  font-weight: 500;
+  color: #53a24f;
+  font-size: 10px;
+  text-align: right;
+  letter-spacing: -0.30px;
+  font-family: "Montserrat", Helvetica;
+  line-height: normal;
+}
+
+.mines .menu {
+  z-index: 2;
+  display: flex;
+  width: 370px;
+  height: 80px;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  position: fixed;
+  bottom: 10px;
+  margin-left: -4.00px;
+  margin-right: -4.00px;
+  background-color: #96969633;
+  border-radius: 17px;
+  backdrop-filter: blur(9px) brightness(100%);
+  -webkit-backdrop-filter: blur(9px) brightness(100%);
+}
+
+.mines .select {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  top: 0;
+  left: 150px;
+}
+
+.mines .main {
+  display: flex;
+  flex-direction: column;
+  width: 34.87px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+}
+
+.mines .mask-group {
+  position: relative;
+  width: 19px;
+  height: 19px;
+}
+
+.mines .text-wrapper-43 {
+  position: relative;
+  align-self: stretch;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #ffffffe6;
+  font-size: 14px;
+  letter-spacing: -0.70px;
+  line-height: normal;
+}
+
+.mines .upgrade {
+  display: flex;
+  flex-direction: column;
+  width: 60px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  align-self: stretch;
+}
+
+.mines .icon {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  background-image: url("https://github.com/Pacific1a/img/blob/main/imgALL/vector-9.svg?raw=true");
+  background-size: 100% 100%;
+}
+
+.mines .text-wrapper-44 {
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #ffffffe6;
+  font-size: 14px;
+  letter-spacing: -0.56px;
+  line-height: normal;
+  position: relative;
+  align-self: stretch;
+}
+
+.mines .game-2 {
+  display: flex;
+  flex-direction: column;
+  width: 42px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  align-self: stretch;
+}
+
+.mines .icon-2 {
+  position: relative;
+  width: 28px;
+  height: 29.87px;
+  background-image: url("https://github.com/Pacific1a/img/blob/main/imgALL/vector-10.svg?raw=true");
+  background-size: 100% 100%;
+}
+
+.mines .text-wrapper-45 {
+  height: 18.13px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #ffffffe6;
+  font-size: 14px;
+  letter-spacing: -0.56px;
+  line-height: normal;
+  position: relative;
+  align-self: stretch;
+}
+
+.mines .swap {
+  display: flex;
+  flex-direction: column;
+  width: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  align-self: stretch;
+}
+
+.mines .overlap-group-wrapper {
+  position: relative;
+  width: 22.92px;
+  height: 19.37px;
+}
+
+.mines .overlap-group-2 {
+  position: relative;
+  width: 23px;
+  height: 19px;
+}
+
+.mines .vector {
+  position: absolute;
+  width: 21px;
+  height: 10px;
+  top: 0;
+  left: 2px;
+}
+
+.mines .vector-2 {
+  position: absolute;
+  width: 21px;
+  height: 10px;
+  top: 9px;
+  left: 0;
+}
+
+.mines .profile {
+  display: flex;
+  flex-direction: column;
+  width: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  align-self: stretch;
+}
+
+.mines .icon-3 {
+  position: relative;
+  width: 22px;
+  height: 22px;
+}
+
+.mines .vector-3 {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: 1px;
+  left: 6px;
+}
+
+.mines .vector-4 {
+  position: absolute;
+  width: 15px;
+  height: 9px;
+  top: 13px;
+  left: 3px;
+}
+.group-ico-1 {
+  display: flex
+;
+  align-items: center;
+  justify-content: end;
+  color: #C3C3C3;
+  gap: 5px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0;
+  line-height: normal;
+  white-space: nowrap;
+}
+.group-ico-1 span{
+  color: #CA3959;
+  font-size: 15px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: normal;
+  white-space: nowrap;
+}

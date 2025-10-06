@@ -1,0 +1,126 @@
+.loading {
+  width: 100%;
+  height: 100%;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  position: relative;
+  background-color: #151414;
+}
+
+.loading .token {
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  height: 331px;
+  object-fit: contain;
+}
+
+.loading .text-wrapper {
+  position: relative;
+  align-self: stretch;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #ffffff;
+  font-size: 16px;
+  text-align: center;
+  letter-spacing: -0.80px;
+  line-height: normal;
+}
+
+.loading .div {
+  position: relative;
+  align-self: stretch;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 500;
+  color: #555555;
+  font-size: 14px;
+  text-align: center;
+  letter-spacing: -0.70px;
+  line-height: normal;
+}
+
+.loading .load-icon {
+  display: flex;
+  flex-direction: column;
+  height: 62px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+}
+
+.loading .icon {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  margin-top: -4.00px;
+  margin-bottom: -4.00px;
+  border: 3px solid #2a2a2a;
+  border-radius: 50%;
+  box-sizing: border-box;
+  position: relative;
+  animation: rotate 1.5s linear infinite;
+}
+
+.loading .icon::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  border-top-color: #ff403e;
+  animation: rotate 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading .authentication {
+  position: relative;
+  align-self: stretch;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 500;
+  color: #c5c5c5;
+  font-size: 15px;
+  text-align: center;
+  line-height: normal;
+}
+
+.loading .span {
+  letter-spacing: -0.11px;
+}
+
+.loading .text-wrapper-2 {
+  letter-spacing: 0;
+}
+
+.loading .bot {
+  position: relative;
+  width: 298px;
+  height: 21px;
+}
+
+.loading .text-wrapper-3 {
+  position: absolute;
+  width: 298px;
+  top: -1px;
+  left: 0;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #ffffff;
+  font-size: 17px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="globals.css" />
+    <link rel="stylesheet" href="styleguide.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <style>
+      html, body{
+        padding: 0;
+        margin: 0;
+        overflow: hidden!important;
+        width: 100%;
+      }
+    </style>
+    <div class="loading" data-model-id="27:149">
+      <img class="token" src="https://raw.githubusercontent.com/Pacific1a/img/6768186bd224ed8383ca478d1363a8b40b694805/loading/Token.svg" />
+      <div class="text-wrapper">Best Money Cases</div>
+      <div class="div">Developed in 2025</div>
+      <div class="load-icon"><div class="icon"></div></div>
+      <p class="authentication">
+        <span class="span" id="loadingStatus">Loading assets</span>
+        <span class="text-wrapper-2" id="loadingProgress">0%</span>
+      </p>
+      <div class="bot"><div class="text-wrapper-3">@bot</div></div>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="../project-preloader.js"></script>
+    <script>
+      (function () {
+        const statusElement = document.getElementById('loadingStatus');
+        const progressElement = document.getElementById('loadingProgress');
+        const redirectUrl = new URL('../index.html', window.location.href).href;
+
+        if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
+          const tg = window.Telegram.WebApp;
+          if (typeof tg.setResizable === 'function') {
+            tg.setResizable(false);
+          }
+          if (typeof tg.expand === 'function') {
+            tg.expand();
+          }
+        }
+
+        const initialPages = [
+          '../index.html',
+          '../gamee/index.html',
+          '../swap/index.html',
+          '../profile/index.html',
+          '../upgrade/index.html',
+          '../mine/index.html',
+          '../speedCASH/index.html',
+          '../roll/index.html',
+          '../crash/index.html',
+          '../BlackJack/index.html'
+        ];
+
+        const coreAssets = [
+          '../main/globals.css',
+          '../main/styleguide.css',
+          '../main/style.css',
+          '../main/home.js',
+          '../global-balance.js',
+          '../game-balance-api.js',
+          '../telegram-user-data.js',
+          '../telegram-user-styles.css'
+        ];
+
+        ProjectPreloader.preload({
+          initialPages,
+          coreAssets,
+          minDisplayTime: 2500,
+          fallbackTimeout: 30000,
+          baseUrl: window.location.href,
+          onProgress: ({ percent, displayName }) => {
+            progressElement.textContent = `${percent}%`;
+            if (percent >= 100) {
+              statusElement.textContent = 'Launching app';
+            } else if (displayName) {
+              statusElement.textContent = `Loading: ${displayName}`;
+            } else {
+              statusElement.textContent = 'Loading assets';
+            }
+          }
+        }).then(() => {
+          window.location.replace(redirectUrl);
+        });
+      })();
+    </script>
+
+  </body>
+</html>

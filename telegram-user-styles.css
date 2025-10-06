@@ -1,0 +1,66 @@
+/* Стили для обрезки длинных ников и аватаров */
+
+/* Общие стили для блоков аккаунта */
+.account-info .nickname .text-wrapper,
+.acc-info .nick .text-wrapper,
+.dev .text-wrapper {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    display: block;
+}
+
+/* Стили для аватаров */
+.account-info .avatar,
+.acc-info .avatar {
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    border-radius: 50%;
+    min-width: 40px;
+    min-height: 40px;
+}
+
+/* Стили для аватаров в списках игроков */
+.acc-inf .avatar-2,
+.acc-inf .avatar-3,
+.acc-inf .avatar-4 {
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    border-radius: 50%;
+}
+
+/* Адаптивные стили для мобильных устройств */
+@media (max-width: 480px) {
+    .account-info .nickname .text-wrapper,
+    .acc-info .nick .text-wrapper,
+    .dev .text-wrapper {
+        font-size: 14px;
+        max-width: 80px;
+    }
+}
+
+/* Стили для длинных ников в списках игроков */
+.acc-inf .text-wrapper-22,
+.acc-inf .text-wrapper-26,
+.acc-inf .text-wrapper-37,
+.acc-inf .text-wrapper-40 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60px;
+    display: block;
+}
+
+/* Стили для элементов с Group 9 - красный цвет текста */
+.group-ico-1:has(img[src*="Group 9.png"]) span {
+    color: #CA3959 !important;
+}
+
+/* Альтернативный способ для браузеров без поддержки :has() */
+.group-ico-1 img[src*="Group 9.png"] + span,
+.group-ico-1 span:has(+ img[src*="Group 9.png"]) {
+    color: #CA3959 !important;
+}

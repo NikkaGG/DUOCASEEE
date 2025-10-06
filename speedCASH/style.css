@@ -1,0 +1,1260 @@
+.speed-cash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 14px 18px;
+  position: relative;
+  background-color: #151414;
+  height: 100%;
+}
+
+.speed-cash .content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  flex: 1;
+  align-self: stretch;
+  width: 100%;
+  flex-grow: 1;
+}
+
+.speed-cash .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+  background-color: transparent;
+}
+
+.speed-cash .account-info {
+  display: inline-flex;
+  max-width: 165px;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.speed-cash .avatar {
+  position: relative;
+  width: 37px;
+  height: 37px;
+  border-radius: 18.5px;
+  box-shadow: 0px 0px 3px #bbbbbb1a, 0px 2px 5px #bbbbbb17, 0px 2px 7px #bbbbbb0d;
+  background: linear-gradient(180deg, rgba(125, 125, 125, 1) 0%, rgba(162, 162, 162, 1) 100%);
+}
+
+.speed-cash .dev {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.speed-cash .text-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  margin-top: -1px;
+  text-shadow: 0px 0px 7px #ffffff38;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 1) 0%, rgba(230, 230, 230, 1) 100%);
+  -webkit-background-clip: text !important;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: transparent;
+  font-size: 15px;
+  letter-spacing: -0.75px;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.speed-cash .add-funds {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 10px;
+  position: relative;
+  flex: 0 0 auto;
+  border-radius: 10px;
+  border: 1.5px solid;
+  border-color: #363535;
+}
+
+.speed-cash .img {
+  position: relative;
+  width: 12px;
+  height: 12px;
+}
+
+.speed-cash .div {
+  position: relative;
+  width: fit-content;
+  margin-top: -1.5px;
+  text-shadow: 0px 0px 8px #6b6b6b38;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #c2c2c2;
+  font-size: 15px;
+  letter-spacing: -0.45px;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.speed-cash .balance {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  display: inline-flex;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.speed-cash .div-wrapper {
+  max-width: 130px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  display: inline-flex;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.speed-cash .text-wrapper-2 {
+  height: 18px;
+  text-shadow: 0px 0px 7px #ffffff38;
+  color: #c2c2c2;
+  font-size: 15px;
+  text-align: right;
+  letter-spacing: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  position: relative;
+  flex: 1;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.speed-cash .text-wrapper-3 {
+  text-shadow: 0px 0px 7px #ca395938;
+  color: #ca3958;
+  font-size: 15px;
+  text-align: right;
+  letter-spacing: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  position: relative;
+  flex: 1;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.speed-cash .game {
+  display: flex;
+  flex-direction: column;
+  height: 368px;
+  align-items: flex-start;
+  width: 100%;
+  margin-left: -1px;
+  margin-right: -1px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: none;
+  box-shadow: 0px 10px 10px #171616;
+  background: linear-gradient(90deg, rgba(32, 32, 36, 1) 0%, rgba(36, 31, 31, 1) 100%);
+  position: relative;
+  align-self: stretch;
+}
+
+.speed-cash .game::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, rgba(34, 34, 34, 1) 0%, rgba(47, 47, 47, 1) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.speed-cash .playing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex: 1;
+  align-self: stretch;
+  width: 100%;
+  flex-grow: 1;
+  border-radius: 20px;
+  box-shadow: inset 0px 0px 66px 22px #141212;
+  background: linear-gradient(90deg, rgba(32, 32, 36, 1) 0%, rgba(36, 31, 31, 1) 100%);
+}
+
+.speed-cash .road {
+  position: absolute;
+  width: 386px;
+  height: 200vh;
+  top: -121vh;
+  left: 0;
+  background-repeat: repeat-y;
+  background-size: 386px auto;
+}
+
+.speed-cash .light {
+  display: flex;
+  width: 381px;
+  height: 366px;
+  align-items: center;
+  justify-content: space-between;
+  position: absolute;
+  top: 0;
+  left: 1px;
+}
+
+.speed-cash .ellipse {
+  height: 332.83px;
+  background-color: #1d366ac4;
+  border-radius: 27.5px/166.41px;
+  transform: rotate(-18.86deg);
+  position: relative;
+  width: 55px;
+  filter: blur(50px);
+}
+
+.speed-cash .ellipse-2 {
+  height: 324.22px;
+  background-color: #68311cc4;
+  border-radius: 27.5px/162.11px;
+  transform: rotate(-12deg);
+  position: relative;
+  width: 55px;
+  filter: blur(50px);
+}
+
+.speed-cash .race {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  flex: 1;
+  align-self: stretch;
+  width: 100%;
+  flex-grow: 1;
+  background-color: #00000075;
+  overflow: hidden;
+}
+
+.speed-cash .race.countdown-mode {
+  background: linear-gradient(135deg, rgb(24, 24, 29) 0%, #1a1616 100%);
+}
+
+.speed-cash .race .div-2 {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.speed-cash .race.game-active .div-2 {
+  opacity: 1;
+}
+
+.speed-cash .race.fade-to-waiting {
+  background: linear-gradient(135deg, rgb(24, 24, 29) 0%, #1a1616 100%);
+  transition: background 1s ease;
+}
+
+.speed-cash .escape-text {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: #ffffff;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  z-index: 15;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.speed-cash .escape-text.show {
+  opacity: 1;
+}
+
+/* Waiting Screen with Loading Bar Background */
+.speed-cash .waiting-screen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 310px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  background-image: url('https://github.com/Pacific1a/img/blob/main/speedcash/Loading%20bar.png?raw=true');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.speed-cash .race.game-active .waiting-screen {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.speed-cash .waiting-screen .countdown-text {
+  color: #ffffff;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 48px;
+  text-align: center;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  z-index: 11;
+}
+
+.speed-cash .div-2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  flex: 1;
+  align-self: stretch;
+  flex-grow: 1;
+}
+
+.speed-cash .multiplier {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  gap: 10px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.speed-cash .text-wrapper-4 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  margin-top: -1px;
+  text-shadow: 0px 3px 22px #28489a;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #244eb6;
+  font-size: 50px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.speed-cash .auto-blue {
+  display: flex;
+  width: 180.5px;
+  top: -19px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.speed-cash .auto-blue-2 {
+  position: relative;
+  flex: 1;
+  flex-grow: 1;
+  height: 245px;
+}
+
+.speed-cash .div-3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.speed-cash .text-wrapper-5 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  margin-top: -1px;
+  text-shadow: 0px 3px 22px #843717;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #c44c13;
+  font-size: 50px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.speed-cash .auto-orange {
+  position: relative;
+  width: 181px;
+  height: 247px;
+  top: -40px;
+  object-fit: cover;
+}
+
+.speed-cash .bet {
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+  display: flex;
+  position: relative;
+}
+
+.speed-cash .crash-section {
+  flex-direction: column;
+  width: 383px;
+  gap: 5px;
+  padding: 8px 10px;
+  flex: 0 0 auto;
+  margin-top: -1px;
+  margin-bottom: -1px;
+  margin-left: -1px;
+  border-radius: 22px;
+  border: none;
+  box-shadow: 0px 10px 10px #171616;
+  background: linear-gradient(90deg, rgba(31, 31, 36, 1) 0%, rgba(44, 38, 35, 1) 100%);
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.speed-cash .crash-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 22px;
+  background: linear-gradient(90deg, rgba(34, 34, 34, 1) 0%, rgba(47, 47, 47, 1) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.speed-cash .crash-section-2 {
+  width: 175px;
+  height: 27px;
+  justify-content: space-between;
+  padding: 3px;
+  border-radius: 13.5px;
+  background: linear-gradient(90deg, rgba(22, 20, 20, 1) 0%, rgba(22, 21, 21, 1) 100%);
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.speed-cash .div-wrapper-2 {
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  flex: 1;
+  align-self: stretch;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.speed-cash .selected {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 4px 0px;
+  position: relative;
+  flex: 1;
+  align-self: stretch;
+  width: 100%;
+  flex-grow: 1;
+  border-radius: 13.5px;
+  background: linear-gradient(90deg, rgba(35, 35, 35, 1) 0%, rgba(46, 46, 46, 1) 100%);
+}
+
+.speed-cash .text-wrapper-6 {
+  justify-content: center;
+  flex: 1;
+  margin-top: -0.5px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #aeaeae;
+  font-size: 10px;
+  text-align: center;
+  letter-spacing: -0.3px;
+  line-height: normal;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.speed-cash .not-selected {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  flex: 1;
+  align-self: stretch;
+  width: 100%;
+  flex-grow: 1;
+}
+
+.speed-cash .vector {
+  position: relative;
+  width: 25px;
+  height: 10px;
+}
+
+.speed-cash .bets {
+  display: flex;
+  width: 359px;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.speed-cash .div-4 {
+  flex-direction: column;
+  width: 175px;
+  height: 172px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  display: flex;
+  position: relative;
+}
+
+.speed-cash .text-wrapper-7 {
+  color: #2d2d33;
+  position: relative;
+  align-self: stretch;
+  margin-top: -1px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: -0.36px;
+  line-height: normal;
+}
+
+.speed-cash .auto-cashout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 5px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(22, 20, 20, 1) 0%, rgba(22, 21, 21, 1) 100%);
+}
+
+.speed-cash .div-5 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.speed-cash .div-6 {
+  position: relative;
+  width: 13px;
+  height: 14.19px;
+}
+
+.speed-cash .vector-2 {
+  position: absolute;
+  width: 13.63%;
+  height: 33.31%;
+  top: 0;
+  left: 43.16%;
+}
+
+.speed-cash .vector-3 {
+  position: absolute;
+  width: 100%;
+  height: 85.69%;
+  top: 14.31%;
+  left: 0;
+}
+
+.speed-cash .div-7 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  align-self: stretch;
+  flex-grow: 1;
+  position: relative;
+  flex: 1;
+}
+
+.speed-cash .x {
+  flex-grow: 1;
+  height: 38.64px;
+  margin-top: -11.52px;
+  margin-bottom: -12.12px;
+  margin-right: -14.47px;
+  position: relative;
+  flex: 1;
+}
+
+.speed-cash .bet-amount {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 5px;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+  border-radius: 14px;
+  box-shadow: 0px 4px 8px #16141438;
+  background: linear-gradient(90deg, rgba(22, 20, 20, 1) 0%, rgba(22, 21, 21, 1) 100%);
+  display: flex;
+  position: relative;
+}
+
+.speed-cash .element {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.speed-cash .button {
+  flex-direction: column;
+  width: 20px;
+  height: 20px;
+  padding: 9px 6px;
+  background-color: #2a2a2a;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+}
+
+.speed-cash .rectangle {
+  position: relative;
+  width: 8px;
+  height: 2px;
+  background-color: #7a7a7a;
+  border-radius: 2px;
+}
+
+.speed-cash .element-2 {
+  position: relative;
+  flex: 1;
+  flex-grow: 1;
+  height: 40.08px;
+  margin-top: -9.44px;
+  margin-bottom: -10.64px;
+}
+
+.speed-cash .union-wrapper {
+  width: 20px;
+  height: 20px;
+  padding: 6px;
+  background-color: #2a2a2a;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+}
+
+.speed-cash .union {
+  position: relative;
+  width: 8px;
+  height: 8px;
+}
+
+.speed-cash .buttons {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.speed-cash .button-2 {
+  all: unset;
+  box-sizing: border-box;
+  padding: 3px 0px;
+  flex: 1;
+  flex-grow: 1;
+  border-radius: 5px 5px 7.5px 7.5px;
+  background: linear-gradient(90deg, rgba(45, 41, 41, 1) 0%, rgba(53, 50, 50, 1) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+}
+
+.speed-cash .text-wrapper-8 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -1px;
+  color: #7a7a7a;
+  font-size: 10px;
+  text-align: center;
+  letter-spacing: -0.3px;
+  position: relative;
+  flex: 1;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.speed-cash .div-wrapper-3 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 2px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  flex: 0 0 auto;
+  border-radius: 20px;
+  background: linear-gradient(90deg, rgba(22, 20, 20, 1) 0%, rgba(22, 21, 21, 1) 100%);
+}
+
+.speed-cash .bet-button {
+  flex-direction: column;
+  height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 0px;
+  align-self: stretch;
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid;
+  border-color: #77c073;
+  background: linear-gradient(90deg, rgba(64, 123, 61, 1) 0%, rgba(84, 164, 80, 1) 100%);
+  display: flex;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* State: Cancel - Red */
+.speed-cash .bet-button.state-cancel {
+  border-color: #BA5759;
+  background: linear-gradient(90deg, rgba(135, 64, 65, 1) 0%, rgba(186, 87, 89, 1) 100%);
+}
+
+/* State: Cash Out - Gold */
+.speed-cash .bet-button.state-cashout {
+  border-color: #c7b363;
+  background: linear-gradient(90deg, rgba(135, 116, 64, 1) 0%, rgba(186, 166, 87, 1) 100%);
+}
+
+.speed-cash .text-wrapper-9 {
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  margin-top: -1px;
+  text-shadow: 0px -4px 22px #ffffff70;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #ffffffb2;
+  font-size: 18px;
+  text-align: center;
+  letter-spacing: -0.54px;
+  line-height: normal;
+  display: flex;
+  position: relative;
+}
+
+/* Когда Cancel без chips - центрируем */
+.speed-cash .state-cancel .text-wrapper-9 {
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Single mode button states */
+.speed-cash .who-is-win .bet-button.state-bet {
+  border-color: #77c073;
+  background: linear-gradient(90deg, rgba(64, 123, 61, 1) 0%, rgba(84, 164, 80, 1) 100%);
+}
+
+.speed-cash .who-is-win .bet-button.state-cancel {
+  border-color: #BA5759;
+  background: linear-gradient(90deg, rgba(135, 64, 65, 1) 0%, rgba(186, 87, 89, 1) 100%);
+}
+
+.speed-cash .who-is-win .bet-button.state-cashout {
+  border-color: #c7b363;
+  background: linear-gradient(90deg, rgba(135, 116, 64, 1) 0%, rgba(186, 166, 87, 1) 100%);
+}
+
+.speed-cash .text-wrapper-10 {
+  background: linear-gradient(90deg, rgba(189, 244, 186, 0.7) 0%, rgba(185, 255, 181, 0.7) 100%);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  margin-top: -1px;
+  text-shadow: 0px 0px 22px #ffffff70;
+  -webkit-background-clip: text !important;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 500;
+  color: transparent;
+  font-size: 14px;
+  text-align: center;
+  letter-spacing: -0.42px;
+  line-height: normal;
+}
+
+.speed-cash .text-wrapper-11 {
+  color: #403734;
+  text-align: right;
+  position: relative;
+  align-self: stretch;
+  margin-top: -1px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: -0.36px;
+  line-height: normal;
+}
+
+.speed-cash .text-wrapper-12 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -1px;
+  text-shadow: 0px 0px 15px #c8c8c838;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #b9b9b9;
+  font-size: 12px;
+  text-align: right;
+  letter-spacing: -0.36px;
+  line-height: normal;
+  position: relative;
+  flex: 1;
+}
+
+.speed-cash .text-wrapper-13 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0px 0px 15px #c8c8c838;
+  color: #b9b9b9;
+  font-size: 14px;
+  text-align: center;
+  letter-spacing: -0.42px;
+  position: relative;
+  flex: 1;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.speed-cash .cash-out-button {
+  display: flex;
+  flex-direction: column;
+  height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 0px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid;
+  border-color: #77c073;
+  background: linear-gradient(90deg, rgba(64, 123, 61, 1) 0%, rgba(84, 164, 80, 1) 100%);
+  transition: all 0.3s ease;
+}
+
+/* State: Bet - Green (default) */
+.speed-cash .cash-out-button.state-bet {
+  border-color: #77c073;
+  background: linear-gradient(90deg, rgba(64, 123, 61, 1) 0%, rgba(84, 164, 80, 1) 100%);
+}
+
+/* State: Cancel - Red */
+.speed-cash .cash-out-button.state-cancel {
+  border-color: #BA5759;
+  background: linear-gradient(90deg, rgba(135, 64, 65, 1) 0%, rgba(186, 87, 89, 1) 100%);
+}
+
+/* State: Cash Out - Gold */
+.speed-cash .cash-out-button.state-cashout {
+  border-color: #c7b363;
+  background: linear-gradient(90deg, rgba(135, 116, 64, 1) 0%, rgba(186, 166, 87, 1) 100%);
+}
+
+.speed-cash .text-wrapper-14 {
+  background: linear-gradient(90deg, rgba(249, 227, 145, 0.7) 0%, rgba(228, 206, 126, 0.7) 100%);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  margin-top: -1px;
+  text-shadow: 0px 0px 22px #ffffff70;
+  -webkit-background-clip: text !important;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 500;
+  color: transparent;
+  font-size: 14px;
+  text-align: center;
+  letter-spacing: -0.42px;
+  line-height: normal;
+}
+
+.speed-cash .streak {
+  margin-bottom: 100px;
+  display: flex;
+  height: 20px;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 11px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  border: none;
+  background: linear-gradient(90deg, rgba(27, 25, 25, 1) 0%, rgba(28, 26, 26, 1) 100%);
+}
+
+.speed-cash .streak::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, rgba(34, 34, 34, 1) 0%, rgba(47, 47, 47, 1) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.speed-cash .text-wrapper-15 {
+  position: relative;
+  width: 28px;
+  margin-top: -1px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #244eb6;
+  font-size: 12px;
+  letter-spacing: -0.6px;
+  line-height: normal;
+}
+
+.speed-cash .text-wrapper-16 {
+  position: relative;
+  width: 31px;
+  margin-top: -1px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #c44c14;
+  font-size: 12px;
+  letter-spacing: -0.6px;
+  line-height: normal;
+}
+
+.speed-cash .menu {
+  display: flex;
+  width: 370px;
+  height: 80px;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  position: fixed;
+  bottom: 10px;
+  margin-left: -8px;
+  margin-right: -8px;
+  background-color: #96969633;
+  border-radius: 17px;
+  backdrop-filter: blur(9px) brightness(100%);
+  -webkit-backdrop-filter: blur(9px) brightness(100%);
+}
+
+.speed-cash .select {
+  position: absolute;
+  top: 0;
+  left: 150px;
+  width: 80px;
+  height: 80px;
+}
+
+.speed-cash .main {
+  display: flex;
+  flex-direction: column;
+  width: 34.87px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+}
+
+.speed-cash .mask-group {
+  position: relative;
+  width: 19px;
+  height: 19px;
+}
+
+.speed-cash .text-wrapper-17 {
+  position: relative;
+  align-self: stretch;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #ffffffe6;
+  font-size: 14px;
+  letter-spacing: -0.7px;
+  line-height: normal;
+}
+
+.speed-cash .upgrade {
+  display: flex;
+  flex-direction: column;
+  width: 60px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  align-self: stretch;
+}
+
+.speed-cash .icon {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  background-image: url(https://raw.githubusercontent.com/Pacific1a/img/6768186bd224ed8383ca478d1363a8b40b694805/imgALL/vector-9.svg);
+  background-size: 100% 100%;
+}
+
+.speed-cash .text-wrapper-18 {
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #ffffffe6;
+  font-size: 14px;
+  letter-spacing: -0.56px;
+  line-height: normal;
+  position: relative;
+  align-self: stretch;
+}
+
+.speed-cash .game-2 {
+  display: flex;
+  flex-direction: column;
+  width: 42px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  align-self: stretch;
+}
+
+.speed-cash .icon-2 {
+  position: relative;
+  width: 28px;
+  height: 29.87px;
+  background-image: url(https://raw.githubusercontent.com/Pacific1a/img/6768186bd224ed8383ca478d1363a8b40b694805/imgALL/vector-10.svg);
+  background-size: 100% 100%;
+}
+
+.speed-cash .text-wrapper-19 {
+  height: 18.13px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  color: #ffffffe6;
+  font-size: 14px;
+  letter-spacing: -0.56px;
+  line-height: normal;
+  position: relative;
+  align-self: stretch;
+}
+
+.speed-cash .swap {
+  display: flex;
+  flex-direction: column;
+  width: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  align-self: stretch;
+}
+
+.speed-cash .icon-3 {
+  position: relative;
+  width: 22.92px;
+  height: 19.37px;
+}
+
+.speed-cash .vector-4 {
+  position: absolute;
+  width: 91.23%;
+  height: 51.48%;
+  top: 0;
+  left: 8.77%;
+}
+
+.speed-cash .vector-5 {
+  position: absolute;
+  width: 91.23%;
+  height: 51.47%;
+  top: 48.53%;
+  left: 0;
+}
+
+.speed-cash .profile {
+  display: flex;
+  flex-direction: column;
+  width: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  align-self: stretch;
+}
+
+.speed-cash .icon-4 {
+  position: relative;
+  width: 22px;
+  height: 22px;
+}
+
+.speed-cash .vector-6 {
+  position: absolute;
+  width: 46.9%;
+  height: 47.12%;
+  top: 4.17%;
+  left: 26.55%;
+}
+
+.speed-cash .vector-7 {
+  position: absolute;
+  width: 69.15%;
+  height: 38.91%;
+  top: 56.92%;
+  left: 15.43%;
+}
+.road-lines {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.road-lines.visible {
+  opacity: 1;
+}
+
+.road-line {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 25px;
+  background: rgba(160, 160, 160, 0.6);
+  border-radius: 1.5px;
+}
+.group-ico-1 {
+  display: flex
+;
+  align-items: center;
+  justify-content: end;
+  color: white;
+  gap: 5px;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0;
+  line-height: normal;
+  white-space: nowrap;
+}
+.group-ico-1 span{
+  color: #CA3959;
+}
+.who-is-win{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+}
+.crash-section-2.plays{
+  width: 360px;
+}

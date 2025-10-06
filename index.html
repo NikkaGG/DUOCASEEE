@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="main/globals.css" />
+    <link rel="stylesheet" href="main/styleguide.css" />
+    <link rel="stylesheet" href="main/style.css" />
+    <link rel="stylesheet" href="telegram-user-styles.css" />
+    
+  </head>
+  <style>
+    
+      body, html{
+        overflow-x: hidden;
+        touch-action: pan-y pan-x;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+      }
+      .hidden {
+        display: none !important;
+      }
+      #app-loader {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 22px;
+        background-color: #151414;
+        z-index: 9999;
+      }
+      #app-loader .loader-token {
+        width: 160px;
+        height: auto;
+        object-fit: contain;
+      }
+      #app-loader .loader-title {
+        font-family: "Montserrat", Helvetica;
+        font-weight: 600;
+        color: #ffffff;
+        font-size: 18px;
+        letter-spacing: -0.8px;
+      }
+      #app-loader .loader-subtitle {
+        font-family: "Montserrat", Helvetica;
+        font-weight: 500;
+        color: #555555;
+        font-size: 14px;
+        letter-spacing: -0.7px;
+      }
+      #app-loader .loader-spinner {
+        width: 50px;
+        height: 50px;
+        border: 3px solid #2a2a2a;
+        border-radius: 50%;
+        position: relative;
+        animation: loader-rotate 1.5s linear infinite;
+      }
+      #app-loader .loader-spinner::before {
+        content: "";
+        position: absolute;
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+        border: 3px solid transparent;
+        border-radius: 50%;
+        border-top-color: #ff403e;
+        animation: loader-rotate 1.5s ease-in-out infinite;
+      }
+      @keyframes loader-rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      #app-loader .loader-status {
+        font-family: "Montserrat", Helvetica;
+        font-weight: 500;
+        color: #c5c5c5;
+        font-size: 15px;
+        text-align: center;
+        display: flex;
+        gap: 8px;
+      }
+      #app-loader .loader-tag {
+        font-family: "Montserrat", Helvetica;
+        font-weight: 600;
+        color: #ffffff;
+        font-size: 17px;
+        letter-spacing: 0;
+      }
+      :root {
+  --banner-bg: linear-gradient(90deg, rgba(255, 64, 62, 1) 0%, rgba(255,64,62,0.8) 100%);
+  --banner-shadow: 0px 0px 55px #ff403f54;
+}
+
+.banner {
+  background: var(--banner-bg);
+  box-shadow: var(--banner-shadow);
+  border-radius: 15px;
+  transition: background 0.6s ease, box-shadow 0.6s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+#banner-title, #banner-text {
+  transition: opacity 0.3s ease;
+}
+
+.fade-out {
+  opacity: 0;
+}
+
+.fade-in {
+  opacity: 1;
+}
+    </style>
+  <body>
+
+    <!-- <div id="app-loader">
+      <img class="loader-token" src="https://raw.githubusercontent.com/Pacific1a/img/6768186bd224ed8383ca478d1363a8b40b694805/loading/Token.svg" alt="Loading token" />
+      <div class="loader-title">Best Money Cases</div>
+      <div class="loader-subtitle">Developed in 2025</div>
+      <div class="loader-spinner"></div>
+      <p class="loader-status">
+        <span id="loadingStatus">Loading...</span>
+        <span id="loadingProgress">0%</span>
+      </p>
+      <div class="loader-tag">@bot</div>
+    </div> -->
+
+    <div id="app" class="main " data-model-id="27:145">
+      <header class="header">
+        <div class="account-info">
+          <div class="avatar"></div>
+          <div class="nickname"><div class="text-wrapper">Nickname</div></div>
+        </div>
+        <div class="add-funds">
+          <img class="img" src="https://raw.githubusercontent.com/Pacific1a/img/af9521ea7091209117e10a6160ad12ff29d7364e/imgALL/image.svg" />
+          <div class="div">Deposite</div>
+        </div>
+        <div class="balance-1">
+          <div class="group-ico-1">
+            0
+            <img src="https://github.com/Pacific1a/img/blob/main/imgALL/Group%208.png?raw=true" alt="" width="20px">
+          </div>
+          <div class="group-ico-1">
+            <span>0</span>
+            <img src="https://github.com/Pacific1a/img/blob/main/imgALL/Group%209.png?raw=true" alt="" width="20px">
+          </div>
+     </div>
+      </header>
+      <div class="streak">
+        <div class="frame">
+          <div class="text-wrapper-5">Live</div>
+          <div class="circle"></div>
+        </div>
+        <img class="img-2" src="https://raw.githubusercontent.com/Pacific1a/img/af9521ea7091209117e10a6160ad12ff29d7364e/imgALL/very-high-prize.svg" />
+        <img class="img-2" src="https://raw.githubusercontent.com/Pacific1a/img/af9521ea7091209117e10a6160ad12ff29d7364e/imgALL/medium-prize.svg" />
+        <img class="img-3" src="https://raw.githubusercontent.com/Pacific1a/img/af9521ea7091209117e10a6160ad12ff29d7364e/imgALL/low-prize.svg" />
+        <img class="img-3" src="https://raw.githubusercontent.com/Pacific1a/img/af9521ea7091209117e10a6160ad12ff29d7364e/imgALL/very-low-prize.svg" />
+        <img class="img-3" src="https://raw.githubusercontent.com/Pacific1a/img/af9521ea7091209117e10a6160ad12ff29d7364e/imgALL/ultra-low-prize.svg" />
+      </div>
+
+      
+      <div class="banner" id="banner">
+        <div class="frame-2">
+          <div class="frame-3">
+            <div class="text-wrapper-7" id="banner-title">Реферальная система</div>
+            <p class="p" id="banner-text">Приглашай друзей и <br /> получай бонусы.</p>
+          </div>
+        </div>
+        <div class="frame-2">
+          <div class="ellipse-3">
+            <div class="ellipse-4"></div>
+            <div class="ellipse-5"></div>
+            <div class="ellipse-6"></div>
+          </div>
+          <div class="MORE-button">
+            <img class="vector" src="https://raw.githubusercontent.com/Pacific1a/img/af9521ea7091209117e10a6160ad12ff29d7364e/main/vector-1.svg" />
+            <div class="text-wrapper-8">Подробнее</div>
+          </div>
+        </div>
+      </div>
+      <div class="section-menu">
+        <div class="all">
+          <img class="all-icon" src="https://raw.githubusercontent.com/Pacific1a/img/af9521ea7091209117e10a6160ad12ff29d7364e/main/all-icon.svg" />
+          <div class="text-wrapper-9">All</div>
+        </div>
+        <div class="div-2">
+          <img class="vector-2" src="https://raw.githubusercontent.com/Pacific1a/img/af9521ea7091209117e10a6160ad12ff29d7364e/main/vector-2.svg" />
+          <div class="text-wrapper-10">Chips</div>
+        </div>
+        <div class="new">
+          <img class="vector-3" src="https://raw.githubusercontent.com/Pacific1a/img/af9521ea7091209117e10a6160ad12ff29d7364e/main/vector-3.svg" />
+          <div class="text-wrapper-11">New</div>
+        </div>
+        <div class="div-2">
+          <img class="vector-4" src="https://raw.githubusercontent.com/Pacific1a/img/af9521ea7091209117e10a6160ad12ff29d7364e/main/vector-4.svg" />
+          <div class="text-wrapper-11">Low</div>
+        </div>
+        <div class="high">
+          <img class="vector-4" src="https://raw.githubusercontent.com/Pacific1a/img/af9521ea7091209117e10a6160ad12ff29d7364e/main/vector-5.svg" />
+          <div class="text-wrapper-12">High</div>
+        </div>
+        <div class="select"></div>
+      </div>
+      <div class="case">
+        <div class="case-crown-banner" data-price="529" data-new="false" data-chip="false">
+          <div class="overlap">
+            <div class="overlap-group-wrapper">
+              <div class="overlap-group-3">
+                <div class="overlap-2"></div>
+                <div class="overlap-3">
+                  <div class="text-wrapper-13">529₽</div>
+                  <div class="text-wrapper-14">Crown</div>
+                </div>
+              </div>
+            </div>
+            <div class="outline-HOT">
+              <div class="overlap-4">
+                <div class="rectangle"></div>
+                <div class="icon-flame">
+                  <div class="overlap-group-4">
+                    <img class="vector-5" src="https://raw.githubusercontent.com/Pacific1a/img/a817d7ec6412b191df2a5767d5e9dccf4e3b17e1/main/vector-7.svg" />
+                    <img class="vector-6" src=" https://raw.githubusercontent.com/Pacific1a/img/a817d7ec6412b191df2a5767d5e9dccf4e3b17e1/main/Vector-6.svg" />
+                  </div>
+                </div>
+                <div class="text-wrapper-15">HOT</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        <div class="case-labubu-banner" data-price="777" data-new="true" data-chip="false">
+          <div class="overlap">
+            <div class="overlap-group-wrapper">
+              <div class="div-3">
+                <div class="overlap-5"></div>
+                <div class="overlap-6">
+                  <div class="text-wrapper-16">777₽</div>
+                  <div class="text-wrapper-17">Labubu</div>
+                </div>
+              </div>
+            </div>
+            <div class="outline-NEW">
+              <div class="overlap-7">
+                <div class="text-wrapper-18">NEW</div>
+                <div class="icon-2"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        <div class="case-love" data-price="659" data-new="false" data-chip="false">
+          <div class="overlap-8">
+            <div class="background"></div>
+            <div class="text-wrapper-19">659₽</div>
+            <div class="text-wrapper-20">Любовь?</div>
+          </div>
+        </div>
+      
+        <div class="div-3" data-price="819" data-new="false" data-chip="false">
+          <div class="crystal-wrapper"></div>
+          <div class="overlap-9">
+            <div class="text-wrapper-21">819₽</div>
+            <div class="text-wrapper-22">Магический</div>
+          </div>
+        </div>
+      
+        <div class="div-3" data-price="1099" data-new="false" data-chip="false">
+          <img class="background" src="https://github.com/Pacific1a/img/blob/main/main/background-2.png?raw=true" />
+          <div class="overlap-10">
+            <div class="text-wrapper-23">1099₽</div>
+            <div class="text-wrapper-24">BearBrick</div>
+          </div>
+        </div>
+      
+        <div class="div-3" data-price="349" data-new="false" data-chip="false">
+          <div class="overlap-11"></div>
+          <div class="overlap-12">
+            <div class="text-wrapper-25">349₽</div>
+            <div class="text-wrapper-26">Космический</div>
+          </div>
+        </div>
+      </div>
+      
+      
+      <div class="menu">
+        <img class="select-2" src="https://github.com/Pacific1a/img/blob/main/main/select.png?raw=true" />
+        <a href="#" class="div-4">
+          <img class="mask-group" src="https://github.com/Pacific1a/img/blob/main/imgALL/mask-group-3.png?raw=true" />
+          <div class="text-wrapper-31">Main</div>
+        </a>
+        <a href="upgrade/index.html" class="upgrade">
+          <div class="icon-3"></div>
+          <div class="text-wrapper-32">Upgrade</div>
+        </a>
+        <a href="gamee/index.html" class="game">
+          <div class="icon-4"></div>
+          <div class="text-wrapper-33">Game</div>
+        </a>
+        <a href="swap/index.html" class="swap">
+          <div class="icon-5">
+            <div class="overlap-group-5">
+              <img class="vector-7" src="https://raw.githubusercontent.com/Pacific1a/img/dc2c4fda5555d83e8626cb240f9621eabe5191a0/imgALL/vector-11.svg" /> <img class="vector-8" src="https://raw.githubusercontent.com/Pacific1a/img/dc2c4fda5555d83e8626cb240f9621eabe5191a0/imgALL/vector-12.svg" />
+            </div>
+          </div>
+          <div class="text-wrapper-32">Swap</div>
+        </a>
+        <a href="profile/index.html" class="profile">
+          <div class="icon-6">
+            <img class="vector-9" src="https://raw.githubusercontent.com/Pacific1a/img/dc2c4fda5555d83e8626cb240f9621eabe5191a0/imgALL/vector-13.svg" /> <img class="vector-10" src="https://raw.githubusercontent.com/Pacific1a/img/dc2c4fda5555d83e8626cb240f9621eabe5191a0/imgALL/vector-14.svg" />
+          </div>
+          <div class="text-wrapper-32">Profile</div>
+        </a>
+      </div>
+    </div>  
+     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+     <script src="telegram-user-data.js"></script>
+    <script src="project-preloader.js"></script>
+    <script src="upgrade/liveprize.js"></script>
+    <script src="global-balance.js"></script>
+    <script src="main/home.js"></script>
+    <script>
+      (function () {
+        const loader = document.getElementById('app-loader');
+        const app = document.getElementById('app');
+        const statusElement = document.getElementById('loadingStatus');
+        const progressElement = document.getElementById('loadingProgress');
+        const storageKey = 'app_loader_completed_v1';
+        const tg = typeof window.Telegram !== 'undefined' ? window.Telegram.WebApp : undefined;
+
+        const cloudAvailable = tg && tg.CloudStorage && typeof tg.CloudStorage.getItem === 'function';
+
+        const getCloudItem = (key) => new Promise((resolve) => {
+          if (!cloudAvailable) {
+            resolve(null);
+            return;
+          }
+          tg.CloudStorage.getItem(key, (error, value) => {
+            if (error) {
+              resolve(null);
+            } else {
+              resolve(value);
+            }
+          });
+        });
+
+        const setCloudItem = (key, value) => new Promise((resolve) => {
+          if (!cloudAvailable) {
+            resolve(false);
+            return;
+          }
+          tg.CloudStorage.setItem(key, value, () => {
+            resolve(true);
+          });
+        });
+
+        const getLocalItem = (key) => {
+          try {
+            return localStorage.getItem(key);
+          } catch (e) {
+            return null;
+          }
+        };
+
+        const setLocalItem = (key, value) => {
+          try {
+            localStorage.setItem(key, value);
+          } catch (e) {
+            // ignore
+          }
+        };
+
+        const showAppImmediately = () => {
+          if (app) {
+            app.classList.remove('hidden');
+          }
+          if (loader) {
+            loader.style.display = 'none';
+          }
+        };
+
+        const markLoaderCompleted = async () => {
+          setLocalItem(storageKey, 'true');
+          await setCloudItem(storageKey, 'true');
+        };
+
+        const isLoaderDisabled = async () => {
+          const cloudValue = await getCloudItem(storageKey);
+          if (cloudValue === 'true') {
+            return true;
+          }
+          const localValue = getLocalItem(storageKey);
+          return localValue === 'true';
+        };
+
+        async function init() {
+          if (!loader || !app || !statusElement || !progressElement || typeof ProjectPreloader === 'undefined') {
+            showAppImmediately();
+            return;
+          }
+
+          if (typeof tg !== 'undefined' && tg) {
+            if (typeof tg.setResizable === 'function') {
+              tg.setResizable(false);
+            }
+            if (typeof tg.expand === 'function') {
+              tg.expand();
+            }
+          }
+
+          const skipLoader = await isLoaderDisabled();
+          if (skipLoader) {
+            showAppImmediately();
+            return;
+          }
+
+          try {
+            await ProjectPreloader.preload({
+              initialPages: [],
+              coreAssets: [
+                'main/globals.css',
+                'main/styleguide.css',
+                'main/style.css',
+                'main/home.js',
+                'global-balance.js',
+                'game-balance-api.js',
+                'telegram-user-data.js',
+                'telegram-user-styles.css'
+              ],
+              minDisplayTime: 2500,
+              fallbackTimeout: 30000,
+              baseUrl: window.location.href,
+              onProgress: ({ percent }) => {
+                progressElement.textContent = `${percent}%`;
+                if (percent >= 100) {
+                  statusElement.textContent = 'Launching app';
+                } else {
+                  statusElement.textContent = 'Loading...';
+                }
+              }
+            });
+            await markLoaderCompleted();
+          } catch (e) {
+            // ignore errors and continue to show app immediately
+          }
+
+          showAppImmediately();
+          if (loader) {
+            loader.classList.add('hidden');
+          }
+        }
+
+        init();
+      })();
+    </script>
+  </body>
+</html>
