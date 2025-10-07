@@ -43,7 +43,7 @@ class CrashGraphAnimation {
     this.lastResizeTS = 0;
 
     // Geometry helpers
-    this.padding = { top: 30, right: 30, bottom: 40, left: 50 };
+    this.padding = { top: 30, right: 30, bottom: 40, left: 0 };
     this.graphWidth = 0;
     this.graphHeight = 0;
     this.displayWidth = 0;
@@ -225,14 +225,7 @@ class CrashGraphAnimation {
   }
 
   drawGrid() {
-    const ctx = this.ctx;
-    const { left, top } = this.padding;
-    const width = this.graphWidth;
-    const height = this.graphHeight;
-
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(left, top, width, height);
+    // Grid rendering disabled
   }
 
   drawCurve() {
