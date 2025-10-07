@@ -126,12 +126,6 @@ class CrashGraphAnimation {
     }
 
     this.setupCanvas();
-    
-    // Добавляем начальную точку в левом нижнем углу
-    const startX = this.padding.left;
-    const startY = this.padding.top + this.graphHeight;
-    this.points.push({ x: startX, y: startY, multiplier: 1.0, time: 0 });
-    
     this.animate();
   }
 
@@ -450,14 +444,16 @@ class CrashGraphAnimation {
 
   mapMultiplier(multiplier) {
     const maxMultiplier = 10;
+    const startOffset = -50;
     const normalizedMultiplier = Math.min((multiplier - 1) / (maxMultiplier - 1), 1);
-    return this.padding.left + normalizedMultiplier * this.graphWidth;
+    return this.padding.left + startOffset + normalizedMultiplier * (this.graphWidth - startOffset);
   }
 
   mapMultiplierVertical(multiplier) {
     const maxMultiplier = 10;
+    const startOffset = 50;
     const normalizedMultiplier = Math.min((multiplier - 1) / (maxMultiplier - 1), 1);
-    return this.padding.top + this.graphHeight - normalizedMultiplier * this.graphHeight;
+    return this.padding.top + this.graphHeight + startOffset - normalizedMultiplier * (this.graphHeight + startOffset);
   }
 
   setExternalMultiplier(multiplier, { immediate = false } = {}) {
