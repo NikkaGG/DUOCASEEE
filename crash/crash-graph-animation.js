@@ -190,7 +190,7 @@ class CrashGraphAnimation {
 
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // this.drawGrid();
+    this.drawGrid();
     this.updatePoints(elapsed);
     this.drawGradientFill();
     this.drawCurve();
