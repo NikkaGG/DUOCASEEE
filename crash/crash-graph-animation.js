@@ -195,6 +195,7 @@ class CrashGraphAnimation {
     this.drawCurve();
     this.drawGlowPoint();
     this.drawTrail();
+    this.drawMultiplierText();
 
     if (this.isCrashed) {
       const crashElapsed = this.crashTime ? now - this.crashTime : 0;
