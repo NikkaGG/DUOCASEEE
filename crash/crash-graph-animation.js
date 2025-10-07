@@ -16,7 +16,7 @@ class CrashGraphAnimation {
 
     this.config = {
       baseGrowth: options.baseGrowth ?? 0.0001,
-      maxPoints: options.maxPoints ?? 120,
+      maxPoints: options.maxPoints ?? 500,
       trailLength: options.trailLength ?? 8,
       particleCount: options.particleCount ?? 30,
       growColor: options.growColor ?? '#00ff88',
@@ -43,7 +43,7 @@ class CrashGraphAnimation {
     this.lastResizeTS = 0;
 
     // Geometry helpers
-    this.padding = { top: 30, right: 30, bottom: 40, left: 0 };
+    this.padding = { top: 30, right: 30, bottom: 40, left: 30 };
     this.graphWidth = 0;
     this.graphHeight = 0;
     this.displayWidth = 0;
@@ -126,6 +126,12 @@ class CrashGraphAnimation {
     }
 
     this.setupCanvas();
+    
+    // Добавляем начальную точку в левом нижнем углу
+    const startX = this.padding.left;
+    const startY = this.padding.top + this.graphHeight;
+    this.points.push({ x: startX, y: startY, multiplier: 1.0, time: 0 });
+    
     this.animate();
   }
 
@@ -209,15 +215,25 @@ class CrashGraphAnimation {
   }
 
   updatePoints(elapsed) {
-    const x = this.mapTime(elapsed);
-    const y = this.mapMultiplier(this.currentMultiplier);
+    const x = this.mapMultiplier(this.currentMultiplier);
+    const y = this.mapMultiplierVertical(this.currentMultiplier);
 
-    if (this.points.length === 0 || x > this.points[this.points.length - 1].x + 2) {
+    // Добавляем точку при каждом кадре для плавности
+    if (this.points.length === 0) {
       this.points.push({ x, y, multiplier: this.currentMultiplier, time: elapsed });
+    } else {
+      const lastPoint = this.points[this.points.length - 1];
+      // Добавляем точку если коэффициент изменился достаточно
+      if (this.currentMultiplier > lastPoint.multiplier + 0.005) {
+        this.points.push({ x, y, multiplier: this.currentMultiplier, time: elapsed });
+      } else {
+        // Обновляем последнюю точку для плавности
+        lastPoint.x = x;
+        lastPoint.y = y;
+        lastPoint.multiplier = this.currentMultiplier;
+        lastPoint.time = elapsed;
+      }
     }
-
-    const minX = this.padding.left - 50;
-    this.points = this.points.filter(point => point.x >= minX);
 
     if (this.points.length > this.config.maxPoints) {
       this.points = this.points.slice(-this.config.maxPoints);
@@ -416,12 +432,13 @@ class CrashGraphAnimation {
 
     const progress = elapsed / 1000;
     const easeOut = 1 - Math.pow(1 - progress, 3);
-    const fallDistance = this.graphHeight * 0.3;
+    const fallDistance = this.graphHeight * 0.5;
     const fallOffset = easeOut * fallDistance;
 
-    this.points = this.points.map(point => ({
+    const bottomY = this.padding.top + this.graphHeight;
+    this.points = this.points.map((point, index) => ({
       ...point,
-      y: point.y + fallOffset * (1 - (point.x - this.padding.left) / this.graphWidth)
+      y: Math.min(point.y + fallOffset * (index / this.points.length), bottomY)
     }));
   }
 
@@ -432,6 +449,12 @@ class CrashGraphAnimation {
   }
 
   mapMultiplier(multiplier) {
+    const maxMultiplier = 10;
+    const normalizedMultiplier = Math.min((multiplier - 1) / (maxMultiplier - 1), 1);
+    return this.padding.left + normalizedMultiplier * this.graphWidth;
+  }
+
+  mapMultiplierVertical(multiplier) {
     const maxMultiplier = 10;
     const normalizedMultiplier = Math.min((multiplier - 1) / (maxMultiplier - 1), 1);
     return this.padding.top + this.graphHeight - normalizedMultiplier * this.graphHeight;
@@ -486,7 +509,7 @@ if (typeof window !== 'undefined') {
     if (canvas && !window.crashGraphInstance) {
       window.crashGraphInstance = new CrashGraphAnimation('crashGraph', {
         baseGrowth: 0.0001,
-        maxPoints: 120,
+        maxPoints: 500,
         trailLength: 8,
         particleCount: 35,
         growColor: '#00ff88',
