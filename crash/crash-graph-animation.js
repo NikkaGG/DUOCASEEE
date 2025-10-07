@@ -230,25 +230,6 @@ class CrashGraphAnimation {
     const width = this.graphWidth;
     const height = this.graphHeight;
 
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-    ctx.lineWidth = 1;
-
-    for (let i = 0; i <= 5; i++) {
-      const y = top + (height / 5) * i;
-      ctx.beginPath();
-      ctx.moveTo(left, y);
-      ctx.lineTo(left + width, y);
-      ctx.stroke();
-    }
-
-    for (let i = 0; i <= 5; i++) {
-      const x = left + (width / 5) * i;
-      ctx.beginPath();
-      ctx.moveTo(x, top);
-      ctx.lineTo(x, top + height);
-      ctx.stroke();
-    }
-
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
     ctx.lineWidth = 2;
     ctx.strokeRect(left, top, width, height);
