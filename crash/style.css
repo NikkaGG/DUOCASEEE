@@ -400,12 +400,6 @@
   pointer-events: none;
 }
 
-/* Canvas graph styling */
-#crashGraph {
-  filter: drop-shadow(0 0 8px rgba(255, 29, 80, 0.3));
-  transition: filter 0.3s ease;
-}
-
 .aviator .game::before {
   content: "";
   position: absolute;
@@ -425,7 +419,11 @@
 }
 
 .aviator .union {
-  display: none;
+  position: absolute;
+  width: 100%;
+  height: 256px;
+  top: 0;
+  left: 0;
 }
 
 .aviator .waiting {
@@ -542,36 +540,34 @@
 /* Plane wrapper - just container */
 #planeWrapper {
   position: absolute;
-  inset: 0;
-  z-index: 6;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  z-index: 5;
   pointer-events: none;
 }
 
-#planeTrail {
+/* Plane image - moved directly */
+.aviator .plane-2 {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-#planeGlow {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  box-shadow: 0 0 25px rgba(0, 255, 136, 0.8), 0 0 50px rgba(0, 255, 136, 0.4);
-  transform: translate(-50%, -50%);
-}
-
-.plane-point {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
-  box-shadow: 0 0 12px rgba(0, 255, 136, 0.8);
-  transform: translate(-50%, -50%);
+  left: 0;
+  top: 0;
+  width: 50px;
+  height: 44px;
+  display: none;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  transform-origin: 25px 22px;
+  backface-visibility: hidden;
   will-change: transform;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+#planeImg {
+  transform-origin: 25px 22px;
 }
 
 
@@ -597,8 +593,7 @@
   letter-spacing: -1.2px;
   color: #ffffff;
   filter: drop-shadow(0 0 40px rgba(255,255,255,0.9));
-  display: none;
-  animation: multiplierPulse 2s ease-in-out infinite;
+  display: block;
   
   /* ОПТИМИЗАЦИЯ - убираем лаги */
   will-change: contents;
@@ -606,33 +601,10 @@
   transform: translateZ(0);
 }
 
-/* Анимация пульсации множителя */
-@keyframes multiplierPulse {
-  0%, 100% {
-    transform: scale(1);
-    filter: drop-shadow(0 0 40px rgba(255,255,255,0.9));
-  }
-  50% {
-    transform: scale(1.05);
-    filter: drop-shadow(0 0 60px rgba(255,255,255,1));
-  }
-}
-
 /* Crash visual state */
 .multiplier-label.crashed {
   color: #ff2b52;
   text-shadow: 0 0 24px rgba(255,43,82,0.8), 0 0 60px rgba(255,43,82,0.5);
-  animation: crashShake 0.5s ease-in-out;
-}
-
-/* Анимация краша */
-@keyframes crashShake {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  10% { transform: translate(-5px, 2px) scale(1.1); }
-  20% { transform: translate(5px, -2px) scale(0.9); }
-  30% { transform: translate(-3px, 1px) scale(1.05); }
-  40% { transform: translate(3px, -1px) scale(0.95); }
-  50% { transform: translate(-2px, 0px) scale(1); }
 }
 
 /* Loading bar rectangle width will be controlled by JS */
@@ -868,11 +840,12 @@
   margin-bottom: -10.64px;
 }
 
-#planeWrapper {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.aviator .union-wrapper {
+  width: 20px;
+  height: 20px;
+  background-color: #2a2a2a;
+  border-radius: 10px;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
@@ -1269,16 +1242,44 @@
   line-height: normal;
 }
 
-.aviator .text-wrapper-19 {
-  display: none;
+.aviator .text-wrapper-20 {
+  position: relative;
+  align-self: stretch;
+  font-family: "Montserrat", Helvetica;
+  font-weight: 500;
+  color: #525252;
+  font-size: 11px;
+  text-align: right;
+  letter-spacing: -0.33px;
+  line-height: normal;
 }
 
 .aviator .progress-bar {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  height: 7px;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+  padding: 2px;
+  position: relative;
+  align-self: stretch;
+  width: 100%;
+  background-color: #212020;
+  border-radius: 3.5px;
 }
 
 .aviator .rectangle-3 {
-  display: none;
+  position: relative;
+  flex: 1;
+  width: 0px;
+  flex-grow: 1;
+  border-radius: 3.5px;
+  background: linear-gradient(
+    90deg,
+    rgba(64, 123, 61, 1) 0%,
+    rgba(84, 164, 80, 1) 100%
+  );
 }
 
 .aviator .user-templates-text {

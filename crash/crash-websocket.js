@@ -96,34 +96,32 @@
     canvas.style.left = '0';
     canvas.style.width = '100%';
     canvas.style.height = '100%';
+    canvas.style.pointerEvents = 'none';
     canvas.style.display = 'none';
     gameContainer.appendChild(canvas);
     elements.graphCanvas = canvas;
     elements.graphCtx = canvas.getContext('2d');
   }
-
-  // Экземпляр графика
-  let crashGraphInstance = null;
-
-  if (typeof CrashGraphAnimation !== 'undefined' && elements.graphCanvas) {
-    crashGraphInstance = new CrashGraphAnimation('crashGraph', {
-      useExternalMultiplier: true,
-      baseGrowth: 0.0001,
-      maxPoints: 140,
-      trailLength: 10,
-      particleCount: 45,
-      growColor: '#00ff88',
-      crashColor: '#ff3366',
-      glowSize: 22,
-      lineWidth: 3.5
-    });
-  }
-
+  
+  // Данные графика
+  let graphPoints = [];
+  let graphTime = 0;
+  let graphCrashed = false;
+  
+  // Plane image for trail
+  const planeImage = new Image();
+  planeImage.src = 'https://raw.githubusercontent.com/Pacific1a/img/main/crash/Union.png';
+  let planeLoaded = false;
+  planeImage.onload = () => {
+    planeLoaded = true;
+    console.log('✈️ Plane image loaded');
+  };
+  
   // Скрываем все блоки при загрузке
   if (elements.multiplierLayer) {
     elements.multiplierLayer.style.display = 'none';
   }
-
+  
   if (elements.waitingRoot) {
     elements.waitingRoot.style.display = 'none';
     
@@ -201,11 +199,15 @@
       console.log('⏳ Ожидание:', data.timeLeft);
       gameState = GAME_STATES.WAITING;
       
-      if (crashGraphInstance) {
-        crashGraphInstance.reset();
-        crashGraphInstance.stop();
+      // ОЧИЩАЕМ ГРАФИК при ожидании
+      graphPoints = [];
+      graphCrashed = true; // Останавливаем анимацию
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
       }
-      if (elements.graphCanvas) {
+      if (elements.graphCtx && elements.graphCanvas) {
+        elements.graphCtx.clearRect(0, 0, elements.graphCanvas.width, elements.graphCanvas.height);
         elements.graphCanvas.style.display = 'none';
       }
       
@@ -245,11 +247,20 @@
       console.log('🚀 Crash начался!');
       gameState = GAME_STATES.FLYING;
       
-      if (crashGraphInstance) {
-        const startTimestamp = data?.startTime ? Date.parse(data.startTime) : Date.now();
-        crashGraphInstance.reset();
-        crashGraphInstance.start(startTimestamp);
+      // ОЧИЩАЕМ ГРАФИК
+      graphPoints = [];
+      graphTime = 0;
+      graphCrashed = false;
+      graphStartTime = Date.now();
+      
+      // ОЧИЩАЕМ CANVAS
+      if (elements.graphCtx && elements.graphCanvas) {
+        elements.graphCtx.clearRect(0, 0, elements.graphCanvas.width, elements.graphCanvas.height);
       }
+      
+      // Запускаем анимацию
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      animateGraph();
       
       // Показываем canvas
       if (elements.graphCanvas) {
@@ -298,10 +309,6 @@
     let lastMultiplierValue = '1.00x';
     ws.socket.on('crash_multiplier', (data) => {
       currentMultiplier = data.multiplier;
-      
-      if (crashGraphInstance) {
-        crashGraphInstance.setExternalMultiplier(currentMultiplier);
-      }
       
       // ПЛАВНЫЙ НАБОР ЦИФР (по 0.01 в начале, по 0.02 выше)
       const now = Date.now();
@@ -361,8 +368,14 @@
       console.log('💥 Краш на:', data.crashPoint);
       gameState = GAME_STATES.CRASHED;
       
-      if (crashGraphInstance) {
-        crashGraphInstance.crash(data?.crashPoint);
+      // Краш графика
+      graphCrashed = true;
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      
+      // ОЧИЩАЕМ СРАЗУ ПОСЛЕ КРАША
+      graphPoints = [];
+      if (elements.graphCtx && elements.graphCanvas) {
+        elements.graphCtx.clearRect(0, 0, elements.graphCanvas.width, elements.graphCanvas.height);
       }
       
       // Показываем "Round ended"
@@ -374,9 +387,6 @@
       setTimeout(() => {
         if (elements.graphCanvas) {
           elements.graphCanvas.style.display = 'none';
-        }
-        if (crashGraphInstance) {
-          crashGraphInstance.stop();
         }
       }, 3000);
       
@@ -676,7 +686,7 @@
     });
   }
 
-  // ============ ДИНАМИЧЕСКАЯ АНИМАЦИЯ ГРАФИКА ============
+  // ============ БЫСТРАЯ АНИМАЦИЯ ГРАФИКА ============
   function drawGraph() {
     if (!elements.graphCtx || !elements.graphCanvas) return;
     
@@ -687,16 +697,16 @@
     // ПОЛНАЯ ОЧИСТКА
     ctx.clearRect(0, 0, width, height);
     
-    // СЕТКА С ГРАДИЕНТОМ
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+    // СЕТКА
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
     ctx.lineWidth = 1;
-    for (let x = 0; x < width; x += 40) {
+    for (let x = 0; x < width; x += 50) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
       ctx.lineTo(x, height);
       ctx.stroke();
     }
-    for (let y = 0; y < height; y += 40) {
+    for (let y = 0; y < height; y += 50) {
       ctx.beginPath();
       ctx.moveTo(0, y);
       ctx.lineTo(width, y);
@@ -705,159 +715,35 @@
     
     if (graphPoints.length < 2) return;
     
-    // Динамический цвет в зависимости от множителя
-    let lineColor = '#FF1D50';
-    let glowIntensity = 0.4;
+    // ПУЛЬСАЦИЯ (вверх-вниз)
+    const pulse = Math.sin(Date.now() / 200) * 10; // Плавает ±10px
     
-    if (currentMultiplier < 1.5) {
-      // Низкие значения - красноватый
-      lineColor = '#FF4D6D';
-      glowIntensity = 0.3;
-    } else if (currentMultiplier < 3.0) {
-      // Средние - оранжевый
-      lineColor = '#FF6B35';
-      glowIntensity = 0.5;
-    } else if (currentMultiplier < 5.0) {
-      // Высокие - желтоватый
-      lineColor = '#FFB627';
-      glowIntensity = 0.6;
-    } else {
-      // Очень высокие - золотой
-      lineColor = '#FFD700';
-      glowIntensity = 0.8;
-    }
+    // Цвет #FF1D50
+    const lineColor = '#FF1D50';
     
-    // ПЛАВНАЯ ПУЛЬСАЦИЯ (синхронизирована с ростом)
-    const pulseSpeed = Math.min(currentMultiplier * 50, 300);
-    const pulseAmplitude = Math.min(5 + currentMultiplier * 2, 15);
-    const pulse = Math.sin(Date.now() / pulseSpeed) * pulseAmplitude;
-    
-    // РИСУЕМ ПЛАВНУЮ КРИВУЮ БЕЗЬЕ
+    // РИСУЕМ КРИВУЮ С ПУЛЬСАЦИЕЙ
     ctx.beginPath();
     ctx.moveTo(graphPoints[0].x, graphPoints[0].y + pulse);
     
-    // Используем квадратичные кривые Безье для плавности
     for (let i = 1; i < graphPoints.length; i++) {
-      const prevPoint = graphPoints[i - 1];
-      const currentPoint = graphPoints[i];
-      
-      if (i === 1) {
-        ctx.lineTo(currentPoint.x, currentPoint.y + pulse);
-      } else {
-        // Контрольная точка для плавной кривой
-        const cpX = (prevPoint.x + currentPoint.x) / 2;
-        const cpY = (prevPoint.y + currentPoint.y) / 2 + pulse;
-        
-        ctx.quadraticCurveTo(
-          prevPoint.x, prevPoint.y + pulse,
-          cpX, cpY
-        );
-      }
+      ctx.lineTo(graphPoints[i].x, graphPoints[i].y + pulse);
     }
     
-    // Финальная точка
-    if (graphPoints.length > 1) {
-      const lastPoint = graphPoints[graphPoints.length - 1];
-      ctx.lineTo(lastPoint.x, lastPoint.y + pulse);
-    }
-    
-    // СВЕЧЕНИЕ ЛИНИИ
-    ctx.shadowColor = lineColor;
-    ctx.shadowBlur = 15 * glowIntensity;
     ctx.strokeStyle = lineColor;
-    ctx.lineWidth = 3 + currentMultiplier * 0.3;
+    ctx.lineWidth = 4;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.stroke();
     
-    // Сбрасываем тень
-    ctx.shadowBlur = 0;
-    
-    // ЗАЛИВКА ПОД ГРАФИКОМ (градиент)
-    if (graphPoints.length > 2) {
-      const gradient = ctx.createLinearGradient(0, graphPoints[0].y, 0, height);
-      gradient.addColorStop(0, `${lineColor}40`);
-      gradient.addColorStop(1, 'transparent');
-      
-      ctx.beginPath();
-      ctx.moveTo(graphPoints[0].x, height);
-      ctx.lineTo(graphPoints[0].x, graphPoints[0].y + pulse);
-      
-      for (let i = 1; i < graphPoints.length; i++) {
-        const prevPoint = graphPoints[i - 1];
-        const currentPoint = graphPoints[i];
-        const cpX = (prevPoint.x + currentPoint.x) / 2;
-        const cpY = (prevPoint.y + currentPoint.y) / 2 + pulse;
-        
-        ctx.quadraticCurveTo(
-          prevPoint.x, prevPoint.y + pulse,
-          cpX, cpY
-        );
-      }
-      
+    // ТОЧКА НА КОНЦЕ
+    if (!graphCrashed) {
       const lastPoint = graphPoints[graphPoints.length - 1];
-      ctx.lineTo(lastPoint.x, lastPoint.y + pulse);
-      ctx.lineTo(lastPoint.x, height);
-      ctx.closePath();
-      ctx.fillStyle = gradient;
-      ctx.fill();
-    }
-    
-    // ИНДИКАТОРНАЯ ЛИНИЯ ОТ ФИКСИРОВАННОЙ ТОЧКИ ДО КОНЦА ГРАФИКА
-    if (!graphCrashed && graphPoints.length > 0) {
-      const lastPoint = graphPoints[graphPoints.length - 1];
-      
-      // Фиксированная точка внизу слева (соответствует 385px в CSS при типичном viewport ~390-400px)
-      // Canvas ширина 400px, поэтому 385px пропорционально будет ~320px в canvas
-      const fixedX = 320;
-      const fixedY = height - 5; // Чуть выше низа
-      
-      // Рисуем линию от фиксированной точки до текущей позиции графика
       ctx.beginPath();
-      ctx.moveTo(fixedX, fixedY);
-      ctx.lineTo(lastPoint.x, lastPoint.y + pulse);
-      
-      // Стиль линии
-      ctx.strokeStyle = lineColor;
-      ctx.lineWidth = 2;
-      ctx.shadowColor = lineColor;
-      ctx.shadowBlur = 10;
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-      
-      // ШАРИК НА КОНЦЕ ЛИНИИ С ПУЛЬСАЦИЕЙ
-      const pointPulse = Math.sin(Date.now() / 150) * 3 + 8;
-      
-      // Внешнее свечение
-      ctx.beginPath();
-      ctx.arc(lastPoint.x, lastPoint.y + pulse, pointPulse + 5, 0, Math.PI * 2);
-      const glowGradient = ctx.createRadialGradient(
-        lastPoint.x, lastPoint.y + pulse, 0,
-        lastPoint.x, lastPoint.y + pulse, pointPulse + 5
-      );
-      glowGradient.addColorStop(0, `${lineColor}80`);
-      glowGradient.addColorStop(1, 'transparent');
-      ctx.fillStyle = glowGradient;
-      ctx.fill();
-      
-      // Основной шарик
-      ctx.beginPath();
-      ctx.arc(lastPoint.x, lastPoint.y + pulse, pointPulse, 0, Math.PI * 2);
-      ctx.fillStyle = lineColor;
-      ctx.fill();
-      
-      // Белая обводка
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      
-      // Фиксированная точка внизу (маленький круг)
-      ctx.beginPath();
-      ctx.arc(fixedX, fixedY, 4, 0, Math.PI * 2);
+      ctx.arc(lastPoint.x, lastPoint.y + pulse, 8, 0, Math.PI * 2);
       ctx.fillStyle = lineColor;
       ctx.fill();
       ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 1;
+      ctx.lineWidth = 2;
       ctx.stroke();
     }
   }
@@ -888,68 +774,22 @@
     const width = elements.graphCanvas.width;
     const height = elements.graphCanvas.height;
     
-    // Прогресс множителя (расширенный диапазон для больших значений)
-    const maxMultiplier = 20.0;
-    const multiplierProgress = Math.min((currentMultiplier - 1.0) / (maxMultiplier - 1.0), 1);
+    // БЫСТРОЕ СОЗДАНИЕ КРИВОЙ
+    const multiplierProgress = Math.min((currentMultiplier - 1.0) / 10.0, 1); // 1x -> 11x
     
-    // X: Начинается в левом нижнем углу и движется вправо
-    const xStart = 20;
-    const xEnd = width - 40;
+    // X: НАЧИНАЕТСЯ НА 40px ЛЕВЕЕ + быстрый рост
+    const xStart = -20; // Начало левее на 40px
+    const xCurve = Math.pow(multiplierProgress, 0.6); // Быстрый старт
+    const x = xStart + (width - xStart - 20) * xCurve;
     
-    // Прогрессивное движение по X (быстрее в начале, медленнее в конце)
-    const xCurve = 1 - Math.pow(1 - multiplierProgress, 0.7);
-    const x = xStart + (xEnd - xStart) * xCurve;
-    
-    // Y: Динамическая траектория в зависимости от множителя
-    let y;
-    const yStart = height - 30; // Стартовая позиция (низ)
-    const yEnd = 20; // Максимальная высота (верх)
-    
-    if (currentMultiplier < 1.2) {
-      // ОЧЕНЬ НИЗКИЕ ЗНАЧЕНИЯ: почти горизонтальная или слегка нисходящая линия
-      const localProgress = (currentMultiplier - 1.0) / 0.2;
-      const wobble = Math.sin(localProgress * Math.PI * 2) * 5; // Небольшие колебания
-      y = yStart - localProgress * 10 + wobble;
-      
-    } else if (currentMultiplier < 1.8) {
-      // НИЗКИЕ ЗНАЧЕНИЯ: пологий рост
-      const localProgress = (currentMultiplier - 1.2) / 0.6;
-      const yCurve = Math.pow(localProgress, 1.2);
-      y = yStart - (yStart - yEnd) * 0.15 * yCurve;
-      
-    } else if (currentMultiplier < 3.0) {
-      // СРЕДНИЕ ЗНАЧЕНИЯ: умеренный рост с небольшим ускорением
-      const localProgress = (currentMultiplier - 1.8) / 1.2;
-      const yCurve = Math.pow(localProgress, 1.5);
-      const baseY = yStart - (yStart - yEnd) * 0.15;
-      y = baseY - (yStart - yEnd) * 0.25 * yCurve;
-      
-    } else if (currentMultiplier < 5.0) {
-      // ВЫСОКИЕ ЗНАЧЕНИЯ: заметное ускорение вверх
-      const localProgress = (currentMultiplier - 3.0) / 2.0;
-      const yCurve = Math.pow(localProgress, 1.8);
-      const baseY = yStart - (yStart - yEnd) * 0.40;
-      y = baseY - (yStart - yEnd) * 0.35 * yCurve;
-      
-    } else {
-      // ОЧЕНЬ ВЫСОКИЕ ЗНАЧЕНИЯ: экспоненциальный рост
-      const localProgress = (currentMultiplier - 5.0) / (maxMultiplier - 5.0);
-      const yCurve = Math.pow(localProgress, 2.2);
-      const baseY = yStart - (yStart - yEnd) * 0.75;
-      y = baseY - (yStart - yEnd) * 0.25 * yCurve;
-    }
-    
-    // Добавляем небольшой случайный шум для естественности (±1-2px)
-    const noise = (Math.random() - 0.5) * 2;
-    y += noise;
-    
-    // Ограничиваем Y в пределах canvas
-    y = Math.max(yEnd, Math.min(yStart, y));
+    // Y: Экспоненциальная кривая
+    const yCurve = Math.pow(multiplierProgress, 2.3);
+    const y = height - 20 - (height - 40) * yCurve;
     
     graphPoints.push({ x, y });
     
-    // Ограничиваем количество точек (больше для плавности)
-    if (graphPoints.length > 300) {
+    // Ограничиваем количество точек
+    if (graphPoints.length > 200) {
       graphPoints.shift();
     }
   }
