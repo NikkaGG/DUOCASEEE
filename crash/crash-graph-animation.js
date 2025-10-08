@@ -1,518 +1,687 @@
 /**
- * Crash Game Graph Animation - Optimized for 60 FPS
- * Supports external multiplier streams (e.g. WebSocket) and smooth canvas resizing
+ * Crash Game - Animation Engine
+ * Управляет Canvas-анимацией стрелки и графика
+ * 
+ * @author Telegram Mini App Team
+ * @version 2.0
  */
 
-class CrashGraphAnimation {
+class CrashGraph {
   constructor(canvasId, options = {}) {
+    // Инициализация Canvas
     this.canvas = document.getElementById(canvasId);
     if (!this.canvas) {
-      throw new Error(`Canvas with id "${canvasId}" not found`);
+      throw new Error(`Canvas с id "${canvasId}" не найден`);
     }
-
-    this.ctx = this.canvas.getContext('2d', { alpha: true });
-    this.handleResize = this.handleResize.bind(this);
-    this.animate = this.animate.bind(this);
-
+    
+    this.ctx = this.canvas.getContext('2d', { alpha: false });
+    
+    // Конфигурация
     this.config = {
-      baseGrowth: options.baseGrowth ?? 0.0001,
-      maxPoints: options.maxPoints ?? 500,
-      trailLength: options.trailLength ?? 8,
-      particleCount: options.particleCount ?? 30,
-      growColor: options.growColor ?? '#00ff88',
-      crashColor: options.crashColor ?? '#ff3366',
-      glowSize: options.glowSize ?? 20,
-      lineWidth: options.lineWidth ?? 3,
-      externalSmoothing: options.externalSmoothing ?? 0.18,
-      useExternalMultiplier: Boolean(options.useExternalMultiplier),
-      ...options
+      arrowColor: options.arrowColor || '#00ff88',
+      crashColor: options.crashColor || '#ff3366',
+      gridLines: options.gridLines !== false,
+      backgroundColor: options.backgroundColor || '#1a1a2e',
+      trailLength: options.trailLength || 15,
+      maxMultiplier: options.maxMultiplier || 10,
+      animationSpeed: options.animationSpeed || 1
     };
-
-    // State
-    this.isRunning = false;
-    this.isCrashed = false;
+    
+    // Состояние игры
+    this.multiplier = 1.00;
+    this.targetMultiplier = 1.00;
+    this.crashed = false;
+    this.running = false;
     this.startTime = null;
-    this.crashTime = null;
     this.animationFrame = null;
-    this.points = [];
+    
+    // Стрелка
+    this.arrow = {
+      x: 0,
+      y: 0,
+      angle: 0,
+      speed: 0,
+      opacity: 1,
+      color: this.config.arrowColor
+    };
+    
+    // История позиций для trail эффекта
+    this.arrowTrail = [];
+    
+    // Частицы для эффекта крэша
     this.particles = [];
-    this.currentMultiplier = 1.0;
-    this.crashMultiplier = null;
-    this.targetMultiplier = this.config.useExternalMultiplier ? 1.0 : null;
-    this.multiplierSmoothing = Math.min(Math.max(this.config.externalSmoothing, 0.01), 1);
-    this.lastResizeTS = 0;
-
-    // Geometry helpers
-    this.padding = { top: 30, right: 30, bottom: 40, left: 30 };
-    this.graphWidth = 0;
-    this.graphHeight = 0;
-    this.displayWidth = 0;
-    this.displayHeight = 0;
-
-    // Resize observers
-    this.resizeObserver = null;
-    if (typeof ResizeObserver !== 'undefined') {
-      this.resizeObserver = new ResizeObserver(() => this.setupCanvas());
-      this.resizeObserver.observe(this.canvas);
-    } else {
-      window.addEventListener('resize', this.handleResize);
-    }
-
-    this.setupCanvas();
+    
+    // Инициализация
+    this.init();
   }
-
-  setupCanvas() {
-    const now = Date.now();
-    if (now - this.lastResizeTS < 16) return;
-
-    const dpr = window.devicePixelRatio || 1;
+  
+  // === ОСНОВНЫЕ МЕТОДЫ ===
+  
+  /**
+   * Инициализация графика
+   */
+  init() {
+    this.resizeCanvas();
+    window.addEventListener('resize', () => this.resizeCanvas());
+    
+    // Начальная позиция стрелки
+    this.arrow.x = this.canvas.width * 0.1;
+    this.arrow.y = this.canvas.height * 0.8;
+  }
+  
+  /**
+   * Адаптация Canvas под размер контейнера (Retina-ready)
+   */
+  resizeCanvas() {
     const rect = this.canvas.getBoundingClientRect();
-    const parent = this.canvas.parentElement;
-    const fallbackWidth = parent ? parent.clientWidth : this.canvas.width;
-    const fallbackHeight = parent ? parent.clientHeight : this.canvas.height;
-
-    const displayWidth = Math.max(rect.width || fallbackWidth || 600, 1);
-    const displayHeight = Math.max(rect.height || fallbackHeight || 400, 1);
-
-    const prevGraphWidth = this.graphWidth || (displayWidth - this.padding.left - this.padding.right);
-    const prevGraphHeight = this.graphHeight || (displayHeight - this.padding.top - this.padding.bottom);
-
-    const bufferWidth = Math.round(displayWidth * dpr);
-    const bufferHeight = Math.round(displayHeight * dpr);
-
-    if (this.canvas.width !== bufferWidth || this.canvas.height !== bufferHeight) {
-      this.canvas.width = bufferWidth;
-      this.canvas.height = bufferHeight;
-    }
-
-    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+    const dpr = window.devicePixelRatio || 1;
+    
+    this.canvas.width = rect.width * dpr;
+    this.canvas.height = rect.height * dpr;
     this.ctx.scale(dpr, dpr);
-    this.canvas.style.width = `${displayWidth}px`;
-    this.canvas.style.height = `${displayHeight}px`;
-
-    this.graphWidth = Math.max(displayWidth - this.padding.left - this.padding.right, 10);
-    this.graphHeight = Math.max(displayHeight - this.padding.top - this.padding.bottom, 10);
-    this.displayWidth = displayWidth;
-    this.displayHeight = displayHeight;
-
-    if (this.points.length && prevGraphWidth > 0 && prevGraphHeight > 0) {
-      const scaleX = this.graphWidth / prevGraphWidth;
-      const scaleY = this.graphHeight / prevGraphHeight;
-      this.points = this.points.map(point => ({
-        ...point,
-        x: this.padding.left + (point.x - this.padding.left) * scaleX,
-        y: this.padding.top + (point.y - this.padding.top) * scaleY
-      }));
+    
+    this.canvas.style.width = rect.width + 'px';
+    this.canvas.style.height = rect.height + 'px';
+    
+    // Пересчитываем позицию стрелки при изменении размера
+    if (this.running) {
+      const pos = this.calculateArrowPosition(this.multiplier, performance.now());
+      this.arrow.x = pos.x;
+      this.arrow.y = pos.y;
+      this.arrow.angle = pos.angle;
     }
-
-    this.ctx.lineCap = 'round';
-    this.ctx.lineJoin = 'round';
-    this.lastResizeTS = now;
   }
-
-  start(startTimestamp) {
-    if (this.isRunning) return;
-
-    this.isRunning = true;
-    this.isCrashed = false;
-    this.startTime = Number.isFinite(startTimestamp) ? startTimestamp : Date.now();
-    this.crashTime = null;
-    this.points = [];
+  
+  /**
+   * Запуск анимационного цикла
+   */
+  startAnimation() {
+    if (this.running) return;
+    
+    this.running = true;
+    this.crashed = false;
+    this.multiplier = 1.00;
+    this.targetMultiplier = 1.00;
+    this.startTime = performance.now();
+    this.arrowTrail = [];
     this.particles = [];
-    this.currentMultiplier = 1.0;
-    this.crashMultiplier = null;
-    if (this.config.useExternalMultiplier) {
-      this.targetMultiplier = 1.0;
-    }
-
-    this.setupCanvas();
-    this.animate();
+    this.arrow.opacity = 1;
+    this.arrow.color = this.config.arrowColor;
+    
+    let lastTime = performance.now();
+    const targetFPS = 60;
+    const frameTime = 1000 / targetFPS;
+    
+    const loop = (currentTime) => {
+      if (!this.running && !this.crashed) return;
+      
+      const deltaTime = currentTime - lastTime;
+      
+      if (deltaTime >= frameTime) {
+        this.update(deltaTime);
+        this.draw();
+        lastTime = currentTime - (deltaTime % frameTime);
+      }
+      
+      this.animationFrame = requestAnimationFrame(loop);
+    };
+    
+    this.animationFrame = requestAnimationFrame(loop);
   }
-
-  crash(multiplier) {
-    if (this.isCrashed) return;
-
-    this.isCrashed = true;
-    this.crashTime = Date.now();
-    const crashValue = Number.isFinite(multiplier) ? multiplier : this.currentMultiplier;
-    this.crashMultiplier = crashValue;
-
-    if (this.config.useExternalMultiplier) {
-      this.setExternalMultiplier(crashValue, { immediate: true });
-    }
-
-    this.createParticleExplosion();
-  }
-
-  stop() {
-    this.isRunning = false;
+  
+  /**
+   * Остановка анимации
+   */
+  stopAnimation() {
+    this.running = false;
     if (this.animationFrame) {
       cancelAnimationFrame(this.animationFrame);
       this.animationFrame = null;
     }
   }
-
-  reset() {
-    this.stop();
-    this.points = [];
-    this.particles = [];
-    this.currentMultiplier = 1.0;
-    this.crashMultiplier = null;
-    this.isCrashed = false;
-    if (this.config.useExternalMultiplier) {
-      this.targetMultiplier = 1.0;
-    }
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-  }
-
-  calculateMultiplier(elapsed) {
-    return Math.pow(1 + this.config.baseGrowth, elapsed);
-  }
-
-  animate() {
-    if (!this.isRunning && !this.isCrashed) return;
-
-    const now = Date.now();
-    const elapsed = this.startTime ? now - this.startTime : 0;
-
-    if (!this.isCrashed) {
-      if (this.config.useExternalMultiplier && this.targetMultiplier !== null) {
-        const delta = this.targetMultiplier - this.currentMultiplier;
-        if (Math.abs(delta) > 1e-4) {
-          this.currentMultiplier += delta * this.multiplierSmoothing;
-        } else {
-          this.currentMultiplier = this.targetMultiplier;
-        }
+  
+  // === ОБНОВЛЕНИЕ СОСТОЯНИЯ ===
+  
+  /**
+   * Обновление состояния анимации
+   */
+  update(deltaTime) {
+    if (!this.crashed) {
+      // Плавное приближение к целевому коэффициенту
+      const delta = this.targetMultiplier - this.multiplier;
+      if (Math.abs(delta) > 0.001) {
+        this.multiplier += delta * 0.15; // Плавность интерполяции
       } else {
-        this.currentMultiplier = this.calculateMultiplier(elapsed);
+        this.multiplier = this.targetMultiplier;
       }
+      
+      // Обновление позиции стрелки
+      const pos = this.calculateArrowPosition(this.multiplier, performance.now());
+      this.arrow.x = pos.x;
+      this.arrow.y = pos.y;
+      this.arrow.angle = pos.angle;
+      this.arrow.speed = (this.multiplier - 1.0) * 2;
     }
-
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    this.drawGrid();
-    this.updatePoints(elapsed);
-    this.drawGradientFill();
-    this.drawCurve();
-    this.drawGlowPoint();
+    
+    // Обновление частиц
+    this.updateParticles(deltaTime);
+  }
+  
+  /**
+   * Обновление коэффициента (вызывается извне, например из WebSocket)
+   */
+  updateMultiplier(newValue) {
+    if (this.crashed) return;
+    this.targetMultiplier = Math.max(newValue, 1.00);
+  }
+  
+  /**
+   * Плавная анимация коэффициента с easing
+   */
+  animateMultiplier(targetValue, duration = 100) {
+    const start = this.multiplier;
+    const startTime = performance.now();
+    
+    const update = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Easing function для плавности
+      const eased = this.easeOutQuad(progress);
+      this.multiplier = start + (targetValue - start) * eased;
+      
+      // Обновление DOM-элемента с коэффициентом
+      this.updateMultiplierDisplay();
+      
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      }
+    };
+    
+    requestAnimationFrame(update);
+  }
+  
+  /**
+   * Обновление отображения коэффициента в DOM
+   */
+  updateMultiplierDisplay() {
+    const display = document.querySelector('.multiplier-display');
+    if (display) {
+      display.textContent = formatMultiplier(this.multiplier);
+      display.style.color = this.crashed ? this.config.crashColor : this.config.arrowColor;
+    }
+  }
+  
+  // === ОТРИСОВКА ===
+  
+  /**
+   * Главный метод отрисовки
+   */
+  draw() {
+    const width = this.canvas.width / (window.devicePixelRatio || 1);
+    const height = this.canvas.height / (window.devicePixelRatio || 1);
+    
+    // Очистка canvas
+    this.ctx.clearRect(0, 0, width, height);
+    
+    // Отрисовка слоев
+    this.drawBackground(width, height);
+    
+    if (this.config.gridLines) {
+      this.drawGrid(width, height);
+    }
+    
+    this.drawTrajectory();
     this.drawTrail();
-    this.drawMultiplierText();
-
-    if (this.isCrashed) {
-      const crashElapsed = this.crashTime ? now - this.crashTime : 0;
-      this.animateCrash(crashElapsed);
-      this.updateParticles();
-      this.drawParticles();
-    }
-
-    this.animationFrame = requestAnimationFrame(this.animate);
+    this.drawArrow();
+    this.drawParticles();
+    this.drawMultiplier(width, height);
   }
-
-  updatePoints(elapsed) {
-    const x = this.mapMultiplier(this.currentMultiplier);
-    const y = this.mapMultiplierVertical(this.currentMultiplier);
-
-    // Добавляем точку при каждом кадре для плавности
-    if (this.points.length === 0) {
-      this.points.push({ x, y, multiplier: this.currentMultiplier, time: elapsed });
-    } else {
-      const lastPoint = this.points[this.points.length - 1];
-      // Добавляем точку если коэффициент изменился достаточно
-      if (this.currentMultiplier > lastPoint.multiplier + 0.005) {
-        this.points.push({ x, y, multiplier: this.currentMultiplier, time: elapsed });
-      } else {
-        // Обновляем последнюю точку для плавности
-        lastPoint.x = x;
-        lastPoint.y = y;
-        lastPoint.multiplier = this.currentMultiplier;
-        lastPoint.time = elapsed;
-      }
-    }
-
-    if (this.points.length > this.config.maxPoints) {
-      this.points = this.points.slice(-this.config.maxPoints);
-    }
+  
+  /**
+   * Отрисовка фона
+   */
+  drawBackground(width, height) {
+    const gradient = this.ctx.createLinearGradient(0, 0, 0, height);
+    gradient.addColorStop(0, '#1a1a2e');
+    gradient.addColorStop(1, '#16213e');
+    
+    this.ctx.fillStyle = gradient;
+    this.ctx.fillRect(0, 0, width, height);
   }
-
-  drawGrid() {
-    // Grid rendering disabled
-  }
-
-  drawCurve() {
-    if (this.points.length < 2) return;
-
+  
+  /**
+   * Отрисовка сетки
+   */
+  drawGrid(width, height) {
     const ctx = this.ctx;
-    const color = this.isCrashed ? this.config.crashColor : this.config.growColor;
-
-    ctx.strokeStyle = color;
-    ctx.lineWidth = this.config.lineWidth;
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = color;
-
-    ctx.beginPath();
-    ctx.moveTo(this.points[0].x, this.points[0].y);
-
-    for (let i = 0; i < this.points.length - 1; i++) {
-      const current = this.points[i];
-      const next = this.points[i + 1];
-
-      if (i === this.points.length - 2) {
-        ctx.lineTo(next.x, next.y);
-      } else {
-        const nextNext = this.points[i + 2];
-        ctx.quadraticCurveTo(next.x, next.y, (next.x + nextNext.x) / 2, (next.y + nextNext.y) / 2);
-      }
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+    ctx.lineWidth = 1;
+    
+    // Вертикальные линии
+    const verticalLines = 10;
+    for (let i = 0; i <= verticalLines; i++) {
+      const x = (width / verticalLines) * i;
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, height);
+      ctx.stroke();
     }
-
-    ctx.stroke();
-    ctx.shadowBlur = 0;
+    
+    // Горизонтальные линии
+    const horizontalLines = 8;
+    for (let i = 0; i <= horizontalLines; i++) {
+      const y = (height / horizontalLines) * i;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(width, y);
+      ctx.stroke();
+    }
+    
+    // Маркеры для круглых значений (2x, 5x, 10x)
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'right';
+    
+    const markers = [2, 5, 10];
+    markers.forEach(mult => {
+      const progress = (mult - 1.0) / (this.config.maxMultiplier - 1.0);
+      const y = height * 0.85 - progress * height * 0.75;
+      
+      if (y > 20 && y < height - 20) {
+        ctx.fillText(`${mult}x`, width - 10, y + 4);
+        
+        // Пунктирная линия
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width - 40, y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    });
   }
-
-  drawGradientFill() {
-    if (this.points.length < 2) return;
-
+  
+  /**
+   * Отрисовка траектории (заливка под кривой)
+   */
+  drawTrajectory() {
+    if (this.arrowTrail.length < 2) return;
+    
     const ctx = this.ctx;
-    const color = this.isCrashed ? this.config.crashColor : this.config.growColor;
-    const bottomY = this.padding.top + this.graphHeight;
-
-    const gradient = ctx.createLinearGradient(0, this.points[0].y, 0, bottomY);
+    const height = this.canvas.height / (window.devicePixelRatio || 1);
+    const color = this.crashed ? this.config.crashColor : this.config.arrowColor;
+    
+    // Градиентная заливка
+    const gradient = ctx.createLinearGradient(0, 0, 0, height);
     gradient.addColorStop(0, `${color}40`);
     gradient.addColorStop(1, `${color}00`);
-
+    
     ctx.fillStyle = gradient;
     ctx.beginPath();
-    ctx.moveTo(this.points[0].x, bottomY);
-
-    for (let i = 0; i < this.points.length - 1; i++) {
-      const current = this.points[i];
-      const next = this.points[i + 1];
-
-      if (i === 0) {
-        ctx.lineTo(current.x, current.y);
-      }
-
-      if (i === this.points.length - 2) {
-        ctx.lineTo(next.x, next.y);
+    
+    // Начинаем снизу
+    ctx.moveTo(this.arrowTrail[0].x, height * 0.85);
+    
+    // Рисуем по точкам trail
+    this.arrowTrail.forEach((point, index) => {
+      if (index === 0) {
+        ctx.lineTo(point.x, point.y);
       } else {
-        const nextNext = this.points[i + 2];
-        ctx.quadraticCurveTo(next.x, next.y, (next.x + nextNext.x) / 2, (next.y + nextNext.y) / 2);
+        ctx.lineTo(point.x, point.y);
       }
-    }
-
-    const lastPoint = this.points[this.points.length - 1];
-    ctx.lineTo(lastPoint.x, bottomY);
+    });
+    
+    // Замыкаем к низу
+    ctx.lineTo(this.arrow.x, height * 0.85);
     ctx.closePath();
     ctx.fill();
   }
-
-  drawGlowPoint() {
-    if (this.points.length === 0) return;
-
-    const lastPoint = this.points[this.points.length - 1];
-    const ctx = this.ctx;
-    const color = this.isCrashed ? this.config.crashColor : this.config.growColor;
-
-    const glowGradient = ctx.createRadialGradient(
-      lastPoint.x, lastPoint.y, 0,
-      lastPoint.x, lastPoint.y, this.config.glowSize
-    );
-    glowGradient.addColorStop(0, `${color}80`);
-    glowGradient.addColorStop(0.5, `${color}40`);
-    glowGradient.addColorStop(1, `${color}00`);
-
-    ctx.fillStyle = glowGradient;
-    ctx.beginPath();
-    ctx.arc(lastPoint.x, lastPoint.y, this.config.glowSize, 0, Math.PI * 2);
-    ctx.fill();
-
-    const pulseScale = 1 + Math.sin(Date.now() * 0.005) * 0.2;
-    ctx.fillStyle = color;
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = color;
-    ctx.beginPath();
-    ctx.arc(lastPoint.x, lastPoint.y, 4 * pulseScale, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
-  }
-
+  
+  /**
+   * Отрисовка следа за стрелкой (trail effect)
+   */
   drawTrail() {
-    if (this.points.length < 2) return;
-
     const ctx = this.ctx;
-    const color = this.isCrashed ? this.config.crashColor : this.config.growColor;
-    const trailPoints = this.points.slice(-this.config.trailLength);
-
-    for (let i = 0; i < trailPoints.length - 1; i++) {
-      const point = trailPoints[i];
-      const alpha = (i / trailPoints.length) * 0.5;
-      const size = (i / trailPoints.length) * 3 + 1;
-      const alphaHex = Math.round(alpha * 255).toString(16).padStart(2, '0');
-
-      ctx.fillStyle = `${color}${alphaHex}`;
+    const now = performance.now();
+    
+    // История позиций для trail
+    this.arrowTrail.push({ 
+      x: this.arrow.x, 
+      y: this.arrow.y,
+      time: now
+    });
+    
+    // Удаление старых точек (старше 500мс)
+    this.arrowTrail = this.arrowTrail.filter(p => now - p.time < 500);
+    
+    // Ограничение количества точек
+    if (this.arrowTrail.length > this.config.trailLength) {
+      this.arrowTrail = this.arrowTrail.slice(-this.config.trailLength);
+    }
+    
+    // Отрисовка trail
+    this.arrowTrail.forEach((point, index) => {
+      const age = (now - point.time) / 500;
+      const opacity = 1 - age;
+      const size = 5 * opacity;
+      
+      ctx.fillStyle = this.arrow.color;
+      ctx.globalAlpha = opacity * 0.3;
       ctx.beginPath();
       ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
       ctx.fill();
-    }
+    });
+    
+    ctx.globalAlpha = 1;
   }
-
-  drawMultiplierText() {
+  
+  /**
+   * Отрисовка стрелки
+   */
+  drawArrow() {
     const ctx = this.ctx;
-    const multiplierText = `${this.currentMultiplier.toFixed(2)}x`;
-    const color = this.isCrashed ? this.config.crashColor : this.config.growColor;
-
-    ctx.font = 'bold 32px Arial, sans-serif';
+    
+    ctx.save();
+    ctx.globalAlpha = this.arrow.opacity;
+    ctx.translate(this.arrow.x, this.arrow.y);
+    ctx.rotate(this.arrow.angle);
+    
+    // Свечение
+    ctx.shadowColor = this.arrow.color;
+    ctx.shadowBlur = 20;
+    
+    // Тело стрелки (треугольник)
+    ctx.fillStyle = this.arrow.color;
+    ctx.beginPath();
+    ctx.moveTo(0, -30); // Наконечник
+    ctx.lineTo(-10, 10);
+    ctx.lineTo(10, 10);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Хвост стрелки (линия)
+    ctx.strokeStyle = this.arrow.color;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(0, 10);
+    ctx.lineTo(0, 40);
+    ctx.stroke();
+    
+    // Дополнительное свечение в центре
+    const glowGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 50);
+    glowGradient.addColorStop(0, `${this.arrow.color}60`);
+    glowGradient.addColorStop(1, `${this.arrow.color}00`);
+    
+    ctx.fillStyle = glowGradient;
+    ctx.beginPath();
+    ctx.arc(0, 0, 50, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.restore();
+  }
+  
+  /**
+   * Отрисовка коэффициента на canvas
+   */
+  drawMultiplier(width, height) {
+    const ctx = this.ctx;
+    const multiplierText = formatMultiplier(this.multiplier);
+    const color = this.crashed ? this.config.crashColor : this.config.arrowColor;
+    
+    ctx.font = 'bold 48px Orbitron, monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-
-    const x = this.displayWidth / 2;
-    const y = this.padding.top + 20;
-
-    ctx.shadowBlur = 20;
+    
+    const x = width / 2;
+    const y = 40;
+    
+    // Свечение текста
+    ctx.shadowBlur = 25;
     ctx.shadowColor = color;
     ctx.fillStyle = color;
     ctx.fillText(multiplierText, x, y);
+    
+    // Повторная отрисовка без тени для яркости
     ctx.shadowBlur = 0;
+    ctx.fillText(multiplierText, x, y);
   }
-
-  createParticleExplosion() {
-    if (this.points.length === 0) return;
-
-    const lastPoint = this.points[this.points.length - 1];
+  
+  // === АНИМАЦИИ ===
+  
+  /**
+   * Эффект крэша с улетом стрелки
+   */
+  triggerCrash() {
+    if (this.crashed) return;
+    
+    this.crashed = true;
+    this.running = false;
+    
+    const crashConfig = {
+      startX: this.arrow.x,
+      startY: this.arrow.y,
+      startAngle: this.arrow.angle,
+      startTime: performance.now(),
+      duration: 1000,
+      acceleration: 2.5
+    };
+    
+    // Создаем частицы взрыва
+    this.createParticleExplosion();
+    
+    const animateCrash = (currentTime) => {
+      const elapsed = currentTime - crashConfig.startTime;
+      const progress = Math.min(elapsed / crashConfig.duration, 1);
+      
+      // Ускоренное движение вверх
+      const eased = this.easeInCubic(progress);
+      const height = this.canvas.height / (window.devicePixelRatio || 1);
+      this.arrow.y = crashConfig.startY - eased * height * 1.5;
+      
+      // Вращение
+      this.arrow.angle = crashConfig.startAngle + progress * Math.PI * 4;
+      
+      // Исчезание
+      this.arrow.opacity = 1 - progress;
+      
+      // Цвет меняется на красный
+      const green = Math.floor((1 - progress) * 255);
+      const red = 255;
+      this.arrow.color = `rgb(${red}, ${green}, 136)`;
+      
+      if (progress < 1) {
+        this.draw();
+        requestAnimationFrame(animateCrash);
+      } else {
+        this.onCrashComplete();
+      }
+    };
+    
+    requestAnimationFrame(animateCrash);
+  }
+  
+  /**
+   * Завершение анимации крэша
+   */
+  onCrashComplete() {
+    this.updateMultiplierDisplay();
+    
+    // Можно добавить callback для внешнего кода
+    if (typeof this.config.onCrashComplete === 'function') {
+      this.config.onCrashComplete(this.multiplier);
+    }
+  }
+  
+  /**
+   * Сброс графика к начальному состоянию
+   */
+  reset() {
+    this.stopAnimation();
+    this.multiplier = 1.00;
+    this.targetMultiplier = 1.00;
+    this.crashed = false;
+    this.running = false;
+    this.arrowTrail = [];
     this.particles = [];
-
-    for (let i = 0; i < this.config.particleCount; i++) {
-      const angle = (Math.PI * 2 * i) / this.config.particleCount;
-      const velocity = 2 + Math.random() * 3;
-
+    this.arrow.opacity = 1;
+    this.arrow.color = this.config.arrowColor;
+    
+    const width = this.canvas.width / (window.devicePixelRatio || 1);
+    const height = this.canvas.height / (window.devicePixelRatio || 1);
+    
+    this.arrow.x = width * 0.1;
+    this.arrow.y = height * 0.8;
+    this.arrow.angle = -Math.PI / 4;
+    
+    this.ctx.clearRect(0, 0, width, height);
+    this.draw();
+  }
+  
+  // === ЧАСТИЦЫ ===
+  
+  /**
+   * Создание эффекта взрыва частиц
+   */
+  createParticleExplosion() {
+    this.particles = [];
+    const particleCount = 30;
+    
+    for (let i = 0; i < particleCount; i++) {
+      const angle = (Math.PI * 2 * i) / particleCount;
+      const velocity = 2 + Math.random() * 4;
+      
       this.particles.push({
-        x: lastPoint.x,
-        y: lastPoint.y,
+        x: this.arrow.x,
+        y: this.arrow.y,
         vx: Math.cos(angle) * velocity,
         vy: Math.sin(angle) * velocity,
         life: 1.0,
-        size: 2 + Math.random() * 3,
-        decay: 0.015 + Math.random() * 0.01
+        size: 2 + Math.random() * 4,
+        decay: 0.015 + Math.random() * 0.01,
+        color: this.config.crashColor
       });
     }
   }
-
-  updateParticles() {
-    this.particles = this.particles.filter(particle => particle.life > 0);
-
+  
+  /**
+   * Обновление частиц
+   */
+  updateParticles(deltaTime) {
+    this.particles = this.particles.filter(p => p.life > 0);
+    
     this.particles.forEach(particle => {
       particle.x += particle.vx;
       particle.y += particle.vy;
-      particle.vy += 0.15;
+      particle.vy += 0.2; // Гравитация
       particle.life -= particle.decay;
-      particle.vx *= 0.98;
+      particle.vx *= 0.98; // Сопротивление воздуха
       particle.vy *= 0.98;
     });
   }
-
+  
+  /**
+   * Отрисовка частиц
+   */
   drawParticles() {
     const ctx = this.ctx;
-
+    
     this.particles.forEach(particle => {
-      const alphaHex = Math.round(particle.life * 255).toString(16).padStart(2, '0');
-      ctx.fillStyle = `${this.config.crashColor}${alphaHex}`;
+      ctx.globalAlpha = particle.life;
+      ctx.fillStyle = particle.color;
       ctx.beginPath();
       ctx.arc(particle.x, particle.y, particle.size * particle.life, 0, Math.PI * 2);
       ctx.fill();
     });
+    
+    ctx.globalAlpha = 1;
   }
-
-  animateCrash(elapsed) {
-    if (!this.crashMultiplier || elapsed > 1000) return;
-
-    const progress = elapsed / 1000;
-    const easeOut = 1 - Math.pow(1 - progress, 3);
-    const fallDistance = this.graphHeight * 0.5;
-    const fallOffset = easeOut * fallDistance;
-
-    const bottomY = this.padding.top + this.graphHeight;
-    this.points = this.points.map((point, index) => ({
-      ...point,
-      y: Math.min(point.y + fallOffset * (index / this.points.length), bottomY)
-    }));
+  
+  // === УТИЛИТЫ ===
+  
+  /**
+   * Расчет позиции стрелки на траектории
+   * Использует комбинацию кривых Безье и синусоиды
+   */
+  calculateArrowPosition(multiplier, time) {
+    const width = this.canvas.width / (window.devicePixelRatio || 1);
+    const height = this.canvas.height / (window.devicePixelRatio || 1);
+    
+    // Прогресс от 0 до 1
+    const t = Math.min((multiplier - 1.0) / (this.config.maxMultiplier - 1.0), 1);
+    
+    // Кривая Безье (квадратичная) для Y
+    const startY = height * 0.85;
+    const controlY = height * 0.4;
+    const endY = height * 0.1;
+    
+    const y = Math.pow(1 - t, 2) * startY + 
+              2 * (1 - t) * t * controlY + 
+              Math.pow(t, 2) * endY;
+    
+    // Небольшие колебания для "живости"
+    const wobble = Math.sin(time * 0.003) * 25 * (1 - t);
+    const x = width * 0.35 + wobble + t * width * 0.3;
+    
+    // Угол наклона стрелки (по направлению движения)
+    const dx = wobble;
+    const dy = -50 * t;
+    const angle = Math.atan2(dy, dx) - Math.PI / 2;
+    
+    return { x, y, angle };
   }
-
-  mapTime(time) {
-    const maxTime = 30000;
-    const normalizedTime = Math.min(time / maxTime, 1);
-    return this.padding.left + normalizedTime * this.graphWidth;
+  
+  /**
+   * Easing функция - плавное замедление
+   */
+  easeOutQuad(t) {
+    return t * (2 - t);
   }
-
-  mapMultiplier(multiplier) {
-    const maxMultiplier = 10;
-    const startOffset = -50;
-    const normalizedMultiplier = Math.min((multiplier - 1) / (maxMultiplier - 1), 1);
-    return this.padding.left + startOffset + normalizedMultiplier * (this.graphWidth - startOffset);
+  
+  /**
+   * Easing функция - плавное ускорение
+   */
+  easeInCubic(t) {
+    return t * t * t;
   }
-
-  mapMultiplierVertical(multiplier) {
-    const maxMultiplier = 10;
-    const startOffset = 50;
-    const normalizedMultiplier = Math.min((multiplier - 1) / (maxMultiplier - 1), 1);
-    return this.padding.top + this.graphHeight + startOffset - normalizedMultiplier * (this.graphHeight + startOffset);
-  }
-
-  setExternalMultiplier(multiplier, { immediate = false } = {}) {
-    if (!this.config.useExternalMultiplier) return;
-    if (!Number.isFinite(multiplier)) return;
-
-    const clamped = Math.max(multiplier, 1.0);
-    this.targetMultiplier = clamped;
-
-    if (immediate) {
-      this.currentMultiplier = clamped;
-    }
-  }
-
-  syncStartTime(timestamp) {
-    if (Number.isFinite(timestamp)) {
-      this.startTime = timestamp;
-    }
-  }
-
-  handleResize() {
-    this.setupCanvas();
-  }
-
-  destroy() {
-    this.stop();
-    if (this.resizeObserver) {
-      this.resizeObserver.disconnect();
-    } else {
-      window.removeEventListener('resize', this.handleResize);
-    }
-  }
-
-  // Easing utilities
-  static easeOutCubic(t) {
-    return 1 - Math.pow(1 - t, 3);
-  }
-
-  static easeInOutCubic(t) {
+  
+  /**
+   * Easing функция - плавное ускорение и замедление
+   */
+  easeInOutCubic(t) {
     return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   }
 }
 
-if (typeof window !== 'undefined') {
-  window.CrashGraphAnimation = CrashGraphAnimation;
+// === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===
 
-  window.addEventListener('DOMContentLoaded', () => {
-    const canvas = document.getElementById('crashGraph');
-    if (canvas && !window.crashGraphInstance) {
-      window.crashGraphInstance = new CrashGraphAnimation('crashGraph', {
-        baseGrowth: 0.0001,
-        maxPoints: 500,
-        trailLength: 8,
-        particleCount: 35,
-        growColor: '#00ff88',
-        crashColor: '#ff3366',
-        glowSize: 20,
-        lineWidth: 3
-      });
-    }
-  });
+/**
+ * Форматирование коэффициента для отображения
+ */
+function formatMultiplier(value) {
+  return value.toFixed(2) + 'x';
+}
+
+/**
+ * Генерация случайного коэффициента краша
+ * Использует экспоненциальное распределение для реалистичности
+ */
+function randomCrashPoint() {
+  const random = Math.random();
+  return 1 + (-Math.log(random) / 0.5);
+}
+
+// === ЭКСПОРТ ===
+
+// Экспорт для ES6 модулей
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = CrashGraph;
+}
+
+// Глобальный доступ в браузере
+if (typeof window !== 'undefined') {
+  window.CrashGraph = CrashGraph;
+  window.formatMultiplier = formatMultiplier;
+  window.randomCrashPoint = randomCrashPoint;
 }
